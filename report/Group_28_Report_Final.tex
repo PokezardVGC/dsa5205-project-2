@@ -13,7 +13,7 @@
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault} % Arial/Helvetica-like
 \usepackage{setspace}
-\setstretch{1.25} % Increased line spacing for readability and length
+\setstretch{1.20} % Increased line spacing for readability and length
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -627,102 +627,76 @@ asset trading strategy exploiting short-term mean reversion on NVIDIA Corporatio
 \end{enumerate}
 
 \section{References}
-1. Chinco, A. M., Clark-Joseph, A. D., \& Ye, M. (2019). Sparse signals in the cross-section of returns. 
-The Journal of Finance, 74(1), 449--492.
-2. Fama, E. F. (1970). Efficient capital markets: A review of theory and empirical work. The Journal 
-of Finance, 25(2), 383--417.
-3. Jegadeesh, N. (1990). Evidence of predictable behavior of security returns. The Journal of Finance, 
-45(3), 881--898.
-4. Jegadeesh, N., \& Titman, S. (1993). Returns to buying winners and selling losers: Implications for 
-stock market efficiency. The Journal of Finance, 48(1), 65--91.
-5. Kelly, B. T., Malamud, S., \& Zhou, K. (2024). The virtue of complexity in return prediction. The 
-Journal of Finance, 79(1), 459--501.
-6. Lehmann, B. N.  (1990). Fads, martingales, and market efficiency. The Quarterly Journal of Economics, 105(1), 1--28.
-7. Lo, A. W., \& MacKinlay, A. C. (1990). When are contrarian profits due to stock market overreaction? 
-The Review of Financial Studies, 3(2), 175--205.
-8. Moskowitz, T. J., Ooi, Y. H., \& Pedersen, L. H.  (2012). Time series momentum. Journal of 
-Financial Economics, 104(2), 228--250.
-9. Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. Journal of Machine Learning 
-Research, 12, 2825--2830.
-
-
-
-
+\begin{list}{}{\setlength{\leftmargin}{0.3in}\setlength{\itemindent}{-0.3in}\setlength{\itemsep}{0em}\setlength{\parsep}{0em}}
+\item Chinco, A. M., Clark-Joseph, A. D., \& Ye, M. (2019). Sparse signals in the cross-section of returns. \textit{The Journal of Finance, 74}(1), 449--492.
+\item Fama, E. F. (1970). Efficient capital markets: A review of theory and empirical work. \textit{The Journal of Finance, 25}(2), 383--417.
+\item Jegadeesh, N. (1990). Evidence of predictable behavior of security returns. \textit{The Journal of Finance, 45}(3), 881--898.
+\item Jegadeesh, N., \& Titman, S. (1993). Returns to buying winners and selling losers: Implications for stock market efficiency. \textit{The Journal of Finance, 48}(1), 65--91.
+\item Kelly, B. T., Malamud, S., \& Zhou, K. (2024). The virtue of complexity in return prediction. \textit{The Journal of Finance, 79}(1), 459--501.
+\item Lehmann, B. N. (1990). Fads, martingales, and market efficiency. \textit{The Quarterly Journal of Economics, 105}(1), 1--28.
+\item Lo, A. W., \& MacKinlay, A. C. (1990). When are contrarian profits due to stock market overreaction? \textit{The Review of Financial Studies, 3}(2), 175--205.
+\item Moskowitz, T. J., Ooi, Y. H., \& Pedersen, L. H. (2012). Time series momentum. \textit{Journal of Financial Economics, 104}(2), 228--250.
+\item Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. \textit{Journal of Machine Learning Research, 12}, 2825--2830.
+\end{list}
 \section{Appendix: Complete Reproducible Source Code}
+{\small
 To ensure reproducibility and transparency, the full codebase orchestrating this strategy is provided below.
 
-\subsection{Module: src/data.py}
+\vspace{-0.5em}
+\subsection*{Module: src/data.py}
+\vspace{-0.5em}
 \begin{verbatim}
 import yfinance as yf
 import pandas as pd
 import numpy as np
-
 def fetch_data(asset, benchmark, start_date, end_date):
     df_asset = yf.download(asset, start=start_date, end=end_date, auto_adjust=True)
     df_bench = yf.download(benchmark, start=start_date, end=end_date, auto_adjust=True)
-
     df = pd.DataFrame()
     df['Price'] = df_asset['Close']
     df['SPY'] = df_bench['Close']
-    
     df = df.dropna()
     return df
 \end{verbatim}
-
-\subsection{Module: src/features.py}
+\vspace{-1.5em}
+\subsection*{Module: src/features.py}
+\vspace{-0.5em}
 \begin{verbatim}
 import pandas as pd
 import numpy as np
-
 def engineer_features(df):
     df_feat = df.copy()
-    
-    # Label: Next day return
     df_feat['Target_Next_Return'] = df_feat['Price'].pct_change().shift(-1)
-    
-    # Feature 1: Lagged returns (momentum/reversion)
     for lag in [1, 2, 3, 5]:
         df_feat[f'Ret_Lag_{lag}'] = df_feat['Price'].pct_change(lag)
-        
-    # Feature 2: Z-Scores from Moving Averages
     for window in [10, 20, 50]:
         ma = df_feat['Price'].rolling(window).mean()
         std = df_feat['Price'].rolling(window).std()
         df_feat[f'Z_Score_{window}'] = (df_feat['Price'] - ma) / std
-        
     df_feat = df_feat.dropna()
     feature_names = [c for c in df_feat.columns if 'Ret_Lag' in c or 'Z_Score' in c]
-    
     return df_feat, feature_names
 \end{verbatim}
-
-\subsection{Module: src/model.py}
+\vspace{-1.5em}
+\subsection*{Module: src/model.py}
+\vspace{-0.5em}
 \begin{verbatim}
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
-
 def train_and_select_model(df, feature_names):
-    # Split 80/20 chronological
     split_idx = int(len(df) * 0.8)
     train_idx = df.index[:split_idx]
     test_idx = df.index[split_idx:]
-    
     X_train = df.loc[train_idx, feature_names]
     y_train = df.loc[train_idx, 'Target_Next_Return']
-    
     X_test = df.loc[test_idx, feature_names]
-    
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
-    
     model = Ridge(alpha=1000.0)
     model.fit(X_train_scaled, y_train)
-    
     preds = model.predict(X_test_scaled)
-    
     return model, preds, test_idx
 \end{verbatim}
-
-
+}
 \end{document}
