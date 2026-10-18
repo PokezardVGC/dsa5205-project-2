@@ -12,7 +12,7 @@
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault} % Arial/Helvetica-like
 \usepackage{setspace}
-\setstretch{1.4} % Increased line spacing for readability and length
+\setstretch{1.25} % Increased line spacing for readability and length
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -32,17 +32,17 @@
 
 \begin{titlepage}
     \centering
-    \vspace*{2in}
+    \vspace*{1in}
     {\LARGE\bfseries DSA5205 Machine Learning in Finance\par}
-    \vspace{0.8in}
+    \vspace{0.6in}
     {\huge\bfseries Project 2: Design, Validate, and Analyze an Original Asset Trading Strategy\par}
-    \vspace{0.4in}
+    \vspace{0.2in}
     {\Large An Empirical Investigation into High-Dimensional Mean Reversion under Secular Momentum: ``Buy the Dip'' on NVIDIA (NVDA)\par}
-    \vspace{1.5in}
+    \vspace{0.6in}
     {\Large \textbf{Group 28}\par}
-    \vspace{0.3in}
+    \vspace{0.15in}
     {\Large Institution: National University of Singapore\par}
-    \vspace{0.3in}
+    \vspace{0.15in}
     {\Large Date: October 2026\par}
 \end{titlepage}
 
@@ -51,8 +51,7 @@
 \newpage
 
 \begin{abstract}
-Abstract — This research investigation implements, validates, and analyzes an original system -
-atic asset trading strategy designed to exploit short-term mean-reverting anomalies (``buying the 
+Abstract — This research investigation implements, validates, and analyzes an original systematic asset trading strategy designed to exploit short-term mean-reverting anomalies (``buying the 
 dip'') on NVIDIA Corporation (NVDA) over a multi-year macroeconomic cycle (January 2015 – 
 January 2024). High-growth technology equities frequently exhibit severe short-term behavioral 
 overreactions driven by institutional liquidity cascades, margin de-leveraging, and retail sentiment 
@@ -60,8 +59,7 @@ shocks. Using a penalized Ridge regression framework (𝐿2 regularization) moti
 high-dimensional learning theory (Kelly, Malamud, and Zhou, 2024), we formulate a predictive 
 model mapping historical return structures and moving average divergences to forward one-day 
 excess returns.
-To eliminate common pitfalls in quantitative asset pricing, we implement rigorous methodolog -
-ical safeguards: strict chronological partitioning (80\% Train/Val, 20\% Out-of-Sample Holdout), 
+To eliminate common pitfalls in quantitative asset pricing, we implement rigorous methodological safeguards: strict chronological partitioning (80\% Train/Val, 20\% Out-of-Sample Holdout), 
 leakage-free feature standardization via expanding-window TimeSeriesSplit cross-validation, 
 static outlier bounds, and realistic Market-On-Close (MOC) execution penalizing round-trip 
 turnover by 10 basis points (0.10\%).
@@ -69,8 +67,7 @@ In out-of-sample evaluation across 449 trading days, our strategy generates an a
 of 46.06\%, an annualized volatility of 54.12\%, and a Sharpe ratio of 0.85 (net of costs), 
 substantially outperforming the broad US equity market benchmark SPY (Annualized Return: 
 7.96\%, Sharpe Ratio: 0.41). While the strategy achieves robust risk-adjusted alpha over the 
-market, it intentionally underperforms the unconstrained Buy-and-Hold NVDA benchmark (An-
-nualized Return: 54.18\%, Sharpe: 0.98). We demonstrate that this underperformance represents 
+market, it intentionally underperforms the unconstrained Buy-and-Hold NVDA benchmark (Annualized Return: 54.18\%, Sharpe: 0.98). We demonstrate that this underperformance represents 
 an inevitable mathematical consequence of contrarian timing in a secular, generative-AI-fueled 
 momentum regime: by design, the model shifts capital into risk-free cash during extended vertical 
 runs, trading away maximum upside capture to curb catastrophic drawdowns.
@@ -81,11 +78,9 @@ runs, trading away maximum upside capture to curb catastrophic drawdowns.
 A central tenet of quantitative finance and empirical asset pricing is the identification and exploitation 
 of market inefficiencies. In frictionless markets governed by the Efficient Market Hypothesis (Fama, 
 1970), price changes follow a martingle difference sequence with respect to historical information sets, 
-rendering past prices useless for forward capital allocation. Over subsequent decades, extensive empir -
-ical research uncovered persistent market anomalies categorized broadly into two competing market 
+rendering past prices useless for forward capital allocation. Over subsequent decades, extensive empirical research uncovered persistent market anomalies categorized broadly into two competing market 
 dynamics:
-1. Time-Series Momentum: The tendency of assets with positive trailing performance over interme -
-diate horizons (3 to 12 months) to continue outperforming (Jegadeesh \& Titman, 1993; Moskowitz 
+1. Time-Series Momentum: The tendency of assets with positive trailing performance over intermediate horizons (3 to 12 months) to continue outperforming (Jegadeesh \& Titman, 1993; Moskowitz 
 et al., 2012).
 2. Short-Term Mean Reversion:  The tendency of asset returns over short lookback horizons (1 to 
 20 days) to reverse, reflecting behavioral overreactions, temporary liquidity shortages, and bid-ask 
@@ -100,8 +95,7 @@ inducing a sharp corrective rebound.
 \subsection{The ``Buy the Dip'' Hypothesis}
 In popular financial parlance, this contrarian dynamic is colloquially termed ``Buying the Dip''. While 
 retail investors often implement this heuristically, institutional quantitative implementation requires an 
-objective, mathematical mapping from multi-scale market divergences to expected rebound probabil -
-ities.
+objective, mathematical mapping from multi-scale market divergences to expected rebound probabilities.
 Our hypothesis posits:
 Hypothesis 1: In high-beta technology leaders with robust long-term enterprise growth, 
 sharp short-term deviations below trailing moving averages represent transient liquidity 
@@ -115,10 +109,8 @@ falls below 30 or price falls 2 standard deviations below a 20-day Bollinger Ban
 data exhibits low signal-to-noise ratios (SNR), time-varying conditional volatility, and complex collinear 
 relationships across multiple lookback windows.
 To systematically learn these dynamics without manual parameter cherry-picking, we formulate the 
-decision rule as a Machine Learning regression task. We explicitly draw upon the theoretical break -
-throughs of Kelly, Malamud, and Zhou (2024, KMZ)  regarding the ``virtue of complexity'' in return 
-prediction. KMZ prove that when underlying factor structures are dense and signals are weak, tradi -
-tional low-dimensional econometric models suffer severe misspecification. By incorporating multiple 
+decision rule as a Machine Learning regression task. We explicitly draw upon the theoretical breakthroughs of Kelly, Malamud, and Zhou (2024, KMZ)  regarding the ``virtue of complexity'' in return 
+prediction. KMZ prove that when underlying factor structures are dense and signals are weak, traditional low-dimensional econometric models suffer severe misspecification. By incorporating multiple 
 candidate signals (short-term lags and multi-scale moving average divergences) into a unified linear 
 system governed by an explicit 𝐿2 regularization penalty (Ridge Regression), the estimator effectively 
 suppresses noise while aggregating weak, dispersed predictive signals into a resilient forecast.
@@ -143,12 +135,10 @@ drawdowns and subsequent recoveries.
 \subsection{Trading Frequency \& Calendar}
 The strategy operates strictly at a Daily frequency  on standard US trading calendar days (NYSE/
 NASDAQ market sessions):
-• Why Daily? Intraday high-frequency trading (1-minute or 5-minute ticks) involves severe microstruc-
-ture frictions, bid-ask spread bounces, and discrete order-book execution latency that cannot be 
+• Why Daily? Intraday high-frequency trading (1-minute or 5-minute ticks) involves severe microstructure frictions, bid-ask spread bounces, and discrete order-book execution latency that cannot be 
 modeled faithfully with free vendor data. Conversely, monthly trading yields approximately 108 
 observations over 9 years—an inadequate sample size for cross-validation and hyperparameter search. 
-Daily bars yield 𝑇 = 2, 264 raw observations, providing ample statistical power for training, valida -
-tion, and holdout testing.
+Daily bars yield 𝑇 = 2, 264 raw observations, providing ample statistical power for training, validation, and holdout testing.
 • Base Currency: All prices, returns, portfolio values, and benchmark comparisons are denominated in 
 US Dollars (USD).
 
@@ -170,11 +160,9 @@ close of 𝑡 + 1. The realized holding return is strictly:
 − 1
 
 \subsection{Investable Benchmarks}
-To avoid biased self-serving benchmarks, we benchmark against two liquid, real-world investable alter-
-natives:
+To avoid biased self-serving benchmarks, we benchmark against two liquid, real-world investable alternatives:
 1. NVDA Buy-and-Hold: Represents the passive alternative of purchasing NVDA on the first day of 
-the out-of-sample period and holding it unhedged. This benchmark tests whether our active mean-
-reversion timing adds value or merely degrades the asset's structural upward drift.
+the out-of-sample period and holding it unhedged. This benchmark tests whether our active meanreversion timing adds value or merely degrades the asset's structural upward drift.
 2. SPY Buy-and-Hold (SPDR S\&P 500 ETF Trust): Represents the broad-market opportunity cost of 
 an institutional equity investor. This benchmark tests whether our single-stock active timing strategy 
 delivers superior risk-adjusted returns (Sharpe ratio) relative to the broader macroeconomic economy.
@@ -188,8 +176,7 @@ Total Return vs. Price Return: A critical data hygiene requirement outlined in A
 specification is the correct treatment of corporate actions. NVDA executed a 4-for-1 forward stock split 
 on July 20, 2021. If an unadjusted price series is ingested, the mechanical price reduction from ≈ \$750 
 to \$187.50 produces an artificial single-day price return of −75\%. Such an error would permanently 
-corrupt the feature matrix and model weights. We enforce auto\_adjust=True, which applies backward-
-adjusted prices factoring in all cash dividend distributions and stock split ratios:
+corrupt the feature matrix and model weights. We enforce auto\_adjust=True, which applies backwardadjusted prices factoring in all cash dividend distributions and stock split ratios:
 𝐴𝑡 = 𝑃𝑡 ⋅ ∏
 𝑘>𝑡
 𝑔𝑘
@@ -218,10 +205,8 @@ shock: 𝑃𝑡𝑃{𝑡−1} − 1. A large negative value indicates
 an immediate dip.
 Ret\_Lag1 1-Day (𝑡 − 1 vs 𝑡 − 2) Trailing 1-day return: 𝑃{𝑡−1}𝑃{𝑡−2} − 1. Captures whether 
 the dip began prior to today.
-Ret\_Lag2 1-Day (𝑡 − 2 vs 𝑡 − 3) Trailing 2-day return: 𝑃{𝑡−2}𝑃{𝑡−3} − 1. Establishes short-
-term acceleration/decay.
-Ret\_Lag5 5-Day (𝑡 vs 𝑡 − 5) Weekly rolling return: 𝑃𝑡𝑃{𝑡−5} − 1. Quantifies inter -
-mediate weekly momentum.
+Ret\_Lag2 1-Day (𝑡 − 2 vs 𝑡 − 3) Trailing 2-day return: 𝑃{𝑡−2}𝑃{𝑡−3} − 1. Establishes shortterm acceleration/decay.
+Ret\_Lag5 5-Day (𝑡 vs 𝑡 − 5) Weekly rolling return: 𝑃𝑡𝑃{𝑡−5} − 1. Quantifies intermediate weekly momentum.
 Dist\_MA10 10-Day Moving Avg Percentage divergence from short-term mean: 
 𝑃𝑡−MA{10,𝑡}
 MA{10,𝑡} . Core dip indicator.
@@ -237,7 +222,7 @@ Within the context of our systematic `Buy the Dip' framework, these extreme left
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/eda_dist.png}
+\includegraphics[width=0.85\textwidth]{../figures/eda_dist.png}
 \caption{Kernel Density Estimation (KDE) demonstrating heavy tails and leptokurtic return profiles.}
 \end{figure}
 
@@ -266,11 +251,9 @@ where $R(n)$ is the range of the first $n$ cumulative deviations from the mean, 
 
 
 \subsection{Data Cleaning \& Outlier Mitigation}
-Financial time series frequently display severe non-Gaussian innovations that destabilize gradient algo-
-rithms and matrix inversions:
+Financial time series frequently display severe non-Gaussian innovations that destabilize gradient algorithms and matrix inversions:
 1. Missing Value Elimination: The computation of 20-day rolling averages and lagged returns produces 
-20 initial rows of NaN entries. These are pruned via complete row deletion (dropna()). No forward-
-filling is applied across missing feature regimes.
+20 initial rows of NaN entries. These are pruned via complete row deletion (dropna()). No forwardfilling is applied across missing feature regimes.
 2. Deterministic Return Bounding:  Extreme market spikes or single-day flash crashes can exert 
 disproportionate leverage in squared-error loss functions. We clip all features and target returns to 
 the bounded interval [−0.50, +0.50] (representing −50\% to +50\% single-day limits). Crucially, this 
@@ -281,7 +264,7 @@ data snooping or leakage.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/eda_1_price.png}
+\includegraphics[width=0.85\textwidth]{../figures/eda_1_price.png}
 \caption{Log-scale price chart of NVDA with 50-day and 200-day Simple Moving Averages.}
 \end{figure}
 
@@ -322,14 +305,14 @@ Operating conditionally within these mathematically validated mean-reverting env
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/eda_2_zscore.png}
+\includegraphics[width=0.85\textwidth]{../figures/eda_2_zscore.png}
 \caption{Rolling 50-day Z-score defining explicit thresholds for mean-reversion activation.}
 \end{figure}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/eda_3_hurst.png}
+\includegraphics[width=0.85\textwidth]{../figures/eda_3_hurst.png}
 \caption{60-day Rolling Hurst Exponent isolating true mean-reverting regimes ($H < 0.5$).}
 \end{figure}
 
@@ -343,8 +326,7 @@ averages rather than discarding one at random.
 
 \section{Data Partitioning, Validation, and Model Selection}
 \subsection{Chronological Dataset Partitioning}
-Financial time-series data violates the independent and identically distributed (i.i.d.) assumption foun -
-dational to cross-sectional machine learning. Randomly shuffling observations (as in standard k-fold 
+Financial time-series data violates the independent and identically distributed (i.i.d.) assumption foundational to cross-sectional machine learning. Randomly shuffling observations (as in standard k-fold 
 cross-validation) creates severe look-ahead bias: the model trains on patterns learned from future market 
 regimes to predict past prices.
 We enforce a strict chronological split across our clean dataset of 𝑇 = 2, 244 trading days:
@@ -352,16 +334,14 @@ We enforce a strict chronological split across our clean dataset of 𝑇 = 2, 24
 to approximately mid-2022. This encompasses diverse macro regimes including the 2018 trade war, 
 the 2020 COVID-19 crash, and the 2021 post-pandemic recovery.
 • Out-of-Sample Holdout Testing Set (20\%): 𝑇test = 449 observations, spanning mid-2022 to January 
-2024. This holdout set is completely sealed during feature standardization and hyperparameter selec -
-tion, used exclusively once for final strategy evaluation.
+2024. This holdout set is completely sealed during feature standardization and hyperparameter selection, used exclusively once for final strategy evaluation.
 
 \subsection{Leakage-Free Standardization Architecture}
 Because Ridge regression penalizes the sum of squared coefficients equally across features, all predictors 
 must reside on identical numerical scales. Failure to scale features properly causes predictors with larger 
 absolute variances to be penalized disproportionately.
 Critical Data Hygiene Protocol: Standardizing the entire matrix 𝑋 using whole-sample means 
-𝜇full and standard deviations 𝜎full introduces insidious data leakage, transmitting future distribu -
-tional parameters into historical feature states.
+𝜇full and standard deviations 𝜎full introduces insidious data leakage, transmitting future distributional parameters into historical feature states.
 We enforce strict forward-only scaling:
 1. During cross-validation, a StandardScaler is fitted strictly on each expanding training window 
 𝑋train and applied forward to the validation slice 𝑋val.
@@ -427,9 +407,7 @@ This constraint is rooted in institutional risk management:
 1. Asymmetric Risk Profile:  Long equity positions possess bounded downside (maximum loss 
 of −100\%) and infinite theoretical upside. Conversely, short equity positions face theoretically 
 unbounded downside risk.
-2. Borrowing Costs \& Hard-to-Borrow Frictions:  Shorting volatile technology leaders incurs con -
-tinuous institutional stock-borrow fees, locate requirements, and vulnerability to catastrophic short-
-squeeze events.
+2. Borrowing Costs \& Hard-to-Borrow Frictions:  Shorting volatile technology leaders incurs continuous institutional stock-borrow fees, locate requirements, and vulnerability to catastrophic shortsqueeze events.
 3. Macroeconomic Equity Drift:  Equities display a positive long-term historical drift. A long-only 
 structure avoids systematically fighting this structural risk premium.
 
@@ -477,8 +455,7 @@ The out-of-sample backtest is executed across the pristine 20\% holdout window (
 days), covering the volatile macro environment from mid-2022 through January 1, 2024. The strategy 
 began with an initial simulated capital allocation of 𝑊0 = \$100, 000.
 Figure 3: Out-of-Sample Cumulative Portfolio Equity Curves (Mid-2022 to January 2024). The chart 
-benchmarks the Active ``Buy the Dip'' Ridge Strategy (Blue) against the Buy-and-Hold NVDA bench-
-mark (Green) and the passive Buy-and-Hold S\&P 500 ETF (SPY , Orange).
+benchmarks the Active ``Buy the Dip'' Ridge Strategy (Blue) against the Buy-and-Hold NVDA benchmark (Green) and the passive Buy-and-Hold S\&P 500 ETF (SPY , Orange).
 
 \subsection{Comprehensive Performance Metrics}
 To deliver a thorough statistical comparison, we report annualized return, annualized standard deviation 
@@ -495,8 +472,7 @@ Total Net Return +78.85\% +102.41\% +13.85\%
 Annualized Return 46.06\% 54.18\% 7.96\%
 Annualized Volatility 54.12\% 55.55\% 19.20\%
 Sharpe Ratio (𝑅𝑓 = 0) 0.85 0.98 0.41
-Transaction Cost Drag −3.20\% (cumula -
-tive)
+Transaction Cost Drag −3.20\% (cumulative)
 0.00\% 0.00\%
 Performance Metric Active ``Buy the 
 Dip''
@@ -505,8 +481,7 @@ Market Exposure (Beta) Active Timing
 (Cash/Long)
 100\% Systematic 
 Beta
-Broad Market Base -
-line
+Broad Market Baseline
 
 
 \subsubsection*{Expert Analysis: Dynamic Risk-Adjusted Edge}
@@ -518,49 +493,49 @@ Crucially, the rolling beta chart corroborates the strategy’s capacity to gene
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/perf_1_cumulative.png}
+\includegraphics[width=0.85\textwidth]{../figures/perf_1_cumulative.png}
 \caption{Out-of-Sample Cumulative Returns (Log Scale) isolating compounding momentum effects.}
 \end{figure}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/perf_2_underwater.png}
+\includegraphics[width=0.85\textwidth]{../figures/perf_2_underwater.png}
 \caption{Strategy vs. Benchmark Drawdown Profile mapping capital lock-up severity.}
 \end{figure}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/perf_3_sharpe.png}
+\includegraphics[width=0.85\textwidth]{../figures/perf_3_sharpe.png}
 \caption{Rolling 6-Month Sharpe Ratio demonstrating dynamic risk-adjusted outperformance.}
 \end{figure}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/perf_4_beta.png}
+\includegraphics[width=0.85\textwidth]{../figures/perf_4_beta.png}
 \caption{Rolling 6-Month Beta verifying strategy market neutrality during crash regimes.}
 \end{figure}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/eda_4_drawdown.png}
+\includegraphics[width=0.85\textwidth]{../figures/eda_4_drawdown.png}
 \caption{Historical Peak-to-Trough Drawdown duration topography.}
 \end{figure}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/eda_5_corr.png}
+\includegraphics[width=0.85\textwidth]{../figures/eda_5_corr.png}
 \caption{Rolling 60-day Pearson Correlation matrix mapping idiosyncratic vs systematic shock propagation.}
 \end{figure}
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/eda_6_vol.png}
+\includegraphics[width=0.85\textwidth]{../figures/eda_6_vol.png}
 \caption{Realized Volatility clustering phenomena proxying GARCH dynamics.}
 \end{figure}
 
@@ -576,10 +551,8 @@ below 20-day MA confirms mean
 reversion.
 Ret\_0 +0.000805 Positive weight: captures short-term 
 intraday momentum continuation.
-Ret\_Lag1 +0.000687 Positive weight: persistent short-
-term trend factor.
-Ret\_Lag2 +0.000198 Weak positive weight: decaying au -
-toregressive memory.
+Ret\_Lag1 +0.000687 Positive weight: persistent shortterm trend factor.
+Ret\_Lag2 +0.000198 Weak positive weight: decaying autoregressive memory.
 Ret\_Lag5 +0.000221 Weak positive weight: weekly drift 
 factor.
 Mathematical Confirmation of ``Buy the Dip'':  The coefficients on Dist\_MA10 and Dist\_MA20 are 
@@ -628,13 +601,11 @@ costs, we constructed an experiment free from look-ahead bias and data snooping.
 (𝛼 = 1000.0) can isolate faint mean-reverting signals from noisy daily returns.
 • Economic Insight:  We demonstrated that active contrarian timing strategies face an unavoidable 
 structural trade-off when deployed against assets experiencing secular technological momentum: the 
-downside protection afforded by cash preservation comes at the cost of trailing unconstrained buy-
-and-hold during generational upward re-ratings.
+downside protection afforded by cash preservation comes at the cost of trailing unconstrained buyand-hold during generational upward re-ratings.
 
 \subsection{Critical Limitations \& Future Research}
 1. Regime-Switching Architecture: Future iterations should incorporate a macro regime filter (e.g., 
-Hidden Markov Models or 200-day Trend Filters) that dynamically switches between momentum-
-following in strong bull regimes and mean-reverting dip-buying in consolidating regimes.
+Hidden Markov Models or 200-day Trend Filters) that dynamically switches between momentumfollowing in strong bull regimes and mean-reverting dip-buying in consolidating regimes.
 2. Intraday MOC Execution Refinement:  While the 15:55 MOC proxy is standard, migrating to 
 next-day market-open execution would eliminate auction proximity assumptions, albeit at the cost of 
 absorbing overnight gap variance.
@@ -651,8 +622,7 @@ of Finance, 25(2), 383–417.
 stock market efficiency. The Journal of Finance, 48(1), 65–91.
 5. Kelly, B. T., Malamud, S., \& Zhou, K. (2024). The virtue of complexity in return prediction. The 
 Journal of Finance, 79(1), 459–501.
-6. Lehmann, B. N.  (1990). Fads, martingales, and market efficiency. The Quarterly Journal of Eco -
-nomics, 105(1), 1–28.
+6. Lehmann, B. N.  (1990). Fads, martingales, and market efficiency. The Quarterly Journal of Economics, 105(1), 1–28.
 7. Lo, A. W., \& MacKinlay, A. C. (1990). When are contrarian profits due to stock market overreaction? 
 The Review of Financial Studies, 3(2), 175–205.
 8. Moskowitz, T. J., Ooi, Y. H., \& Pedersen, L. H.  (2012). Time series momentum. Journal of 
