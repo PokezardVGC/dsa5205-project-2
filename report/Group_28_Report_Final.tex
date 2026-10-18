@@ -491,52 +491,53 @@ The rolling Sharpe ratio chart provides compelling empirical evidence of the str
 
 Crucially, the rolling beta chart corroborates the strategy’s capacity to generate true, uncorrelated alpha without warehousing excessive systematic risk during tail-event drawdowns. A common failure mode of naive dip-buying strategies is the ``falling knife'' phenomenon, wherein conditional market beta expands precisely during severe market sell-offs, inadvertently transforming purported alpha into leveraged systematic exposure. In stark contrast, our rolling beta remains tightly bounded and exhibits systematic compression during broad market crashes. This dynamic decoupling proves that the strategy successfully isolates asset-specific mean-reversion rather than merely loading up on the equity risk premium at discounted valuations. Because the strategy's maximum drawdowns do not temporally align with spikes in rolling beta, we can conclusively establish that the generated excess returns represent genuine idiosyncratic alpha. Ultimately, the charts empirically validate a strictly convex payoff profile that capitalizes on NVDA's acute volatility without exposing the capital base to uncompensated macro-systematic fragility.
 
+
+
+\subsubsection*{Synthesis of Empirical Visualizations}
+
+The strategy's absolute performance over the backtest period demonstrates consistent capital growth. As illustrated below, the cumulative returns compound steadily, outperforming the primary benchmark across multiple market cycles (\textbf{Figure \ref{fig:cumulative}}).
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/perf_1_cumulative.png}
 \caption{Out-of-Sample Cumulative Returns (Log Scale) isolating compounding momentum effects.}
+\label{fig:cumulative}
 \end{figure}
 
+However, absolute returns only tell part of the story; managing downside risk is equally critical. The underwater drawdown profile highlights the frequency and severity of peak-to-trough declines, showing how the strategy navigates periods of market stress (\textbf{Figure \ref{fig:underwater}}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/perf_2_underwater.png}
 \caption{Strategy vs. Benchmark Drawdown Profile mapping capital lock-up severity.}
+\label{fig:underwater}
 \end{figure}
 
+To evaluate the consistency of this performance relative to the risks taken, we examine the rolling Sharpe ratio. This metric confirms that the strategy maintains a stable premium over the risk-free rate, even as market regimes shift (\textbf{Figure \ref{fig:sharpe}}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/perf_3_sharpe.png}
 \caption{Rolling 6-Month Sharpe Ratio demonstrating dynamic risk-adjusted outperformance.}
+\label{fig:sharpe}
 \end{figure}
 
+A key objective of the portfolio is maintaining controlled exposure to broad market movements. The rolling beta profile below demonstrates our dynamic market sensitivity and illustrates how effectively the strategy insulates itself from systemic shocks (\textbf{Figure \ref{fig:beta}}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/perf_4_beta.png}
 \caption{Rolling 6-Month Beta verifying strategy market neutrality during crash regimes.}
+\label{fig:beta}
 \end{figure}
 
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{../figures/eda_4_drawdown.png}
-\caption{Historical Peak-to-Trough Drawdown duration topography.}
-\end{figure}
-
+Finally, the strategy's true value lies in its diversification benefits when combined with traditional asset classes. The rolling correlation analysis confirms that the portfolio largely maintains a low or negative correlation with equities, serving as a reliable structural hedge (\textbf{Figure \ref{fig:correlation}}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/eda_5_corr.png}
 \caption{Rolling 60-day Pearson Correlation matrix mapping idiosyncratic vs systematic shock propagation.}
-\end{figure}
-
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{../figures/eda_6_vol.png}
-\caption{Realized Volatility clustering phenomena proxying GARCH dynamics.}
+\label{fig:correlation}
 \end{figure}
 
 \subsection{Economic Interpretation of Learned Model Coefficients}
