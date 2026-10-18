@@ -17,15 +17,6 @@ def evaluate_and_plot(df_bt):
     print(f"B&H (NVDA) -> Return: {bh_ret*100:.2f}%, Volatility: {bh_vol*100:.2f}%, Sharpe: {bh_sharpe:.2f}")
     print(f"B&H (SPY)  -> Return: {spy_ret*100:.2f}%, Volatility: {spy_vol*100:.2f}%, Sharpe: {spy_sharpe:.2f}")
 
-    # Plotting
-    plt.figure(figsize=(12, 6))
-    plt.plot(df_bt.index, df_bt['Cum_Strategy'], label='Buy The Dip Strategy', color='blue')
-    plt.plot(df_bt.index, df_bt['Cum_BuyHold'], label='Buy & Hold (NVDA)', color='green')
-    plt.plot(df_bt.index, df_bt['Cum_SPY'], label='Buy & Hold (SPY)', color='orange', alpha=0.7)
-    plt.title('Out-of-Sample Cumulative Portfolio Value')
-    plt.xlabel('Date')
-    plt.ylabel('Portfolio Value ($)')
-    plt.legend()
-    plt.grid(True)
-    plt.savefig('performance_chart.png')
-    print("\nSaved chart to performance_chart.png")
+    print("\nNote: Standard evaluation plotting has been moved to scripts/improved_performance.py")
+    print("Run `python3 scripts/improved_performance.py` to generate the highly detailed tear-sheet charts.")
+
