@@ -28,7 +28,7 @@ def generate_split_perf_charts():
     plt.ylabel('Portfolio Value ($)')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('perf_1_cumulative.png', dpi=300)
+    plt.savefig('figures/perf_1_cumulative.png', dpi=300)
     plt.close()
 
     # 2. Underwater Strategy
@@ -44,7 +44,7 @@ def generate_split_perf_charts():
     plt.ylabel('Drawdown (%)')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('perf_2_underwater.png', dpi=300)
+    plt.savefig('figures/perf_2_underwater.png', dpi=300)
     plt.close()
 
     # 3. Rolling Sharpe
@@ -64,7 +64,7 @@ def generate_split_perf_charts():
     plt.ylabel('Sharpe Ratio')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('perf_3_sharpe.png', dpi=300)
+    plt.savefig('figures/perf_3_sharpe.png', dpi=300)
     plt.close()
 
     # 4. Rolling Beta
@@ -80,7 +80,7 @@ def generate_split_perf_charts():
     plt.ylabel('Beta')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('perf_4_beta.png', dpi=300)
+    plt.savefig('figures/perf_4_beta.png', dpi=300)
     plt.close()
 
 if __name__ == "__main__":

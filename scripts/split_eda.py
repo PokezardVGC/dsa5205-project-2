@@ -39,7 +39,7 @@ def generate_split_eda_charts():
     plt.title('Figure 1: NVDA Price and Moving Averages')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('eda_1_price.png', dpi=300)
+    plt.savefig('figures/eda_1_price.png', dpi=300)
     plt.close()
 
     # 2. Z-Score
@@ -52,7 +52,7 @@ def generate_split_eda_charts():
     plt.title('Figure 2: Rolling 50-day Z-Score (Dip Signal)')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('eda_2_zscore.png', dpi=300)
+    plt.savefig('figures/eda_2_zscore.png', dpi=300)
     plt.close()
 
     # 3. Hurst
@@ -64,7 +64,7 @@ def generate_split_eda_charts():
     plt.title('Figure 3: Rolling Hurst Exponent')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('eda_3_hurst.png', dpi=300)
+    plt.savefig('figures/eda_3_hurst.png', dpi=300)
     plt.close()
 
     # 4. Underwater Drawdown
@@ -77,7 +77,7 @@ def generate_split_eda_charts():
     plt.title('Figure 4: NVDA Drawdown Profile')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('eda_4_drawdown.png', dpi=300)
+    plt.savefig('figures/eda_4_drawdown.png', dpi=300)
     plt.close()
 
     # 5. Correlation
@@ -88,7 +88,7 @@ def generate_split_eda_charts():
     plt.title('Figure 5: Rolling Correlation with SPY')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('eda_5_corr.png', dpi=300)
+    plt.savefig('figures/eda_5_corr.png', dpi=300)
     plt.close()
 
     # 6. Volatility
@@ -98,7 +98,7 @@ def generate_split_eda_charts():
     plt.title('Figure 6: Rolling Annualized Volatility')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('eda_6_vol.png', dpi=300)
+    plt.savefig('figures/eda_6_vol.png', dpi=300)
     plt.close()
 
 if __name__ == "__main__":
