@@ -9,6 +9,8 @@ def engineer_features(df):
     
     # Daily returns (Today's close vs Yesterday's close)
     df['Return'] = df['Price'].pct_change()
+    if 'SPY' in df.columns:
+        df['SPY_Return'] = df['SPY'].pct_change()
 
     # Past returns (Today's, Yesterday's, etc.)
     # Note: df['Return'] is already known at today's close
@@ -26,6 +28,8 @@ def engineer_features(df):
 
     # Label Creation: We want to predict tomorrow's return
     df['Target_Next_Return'] = df['Return'].shift(-1)
+    if 'SPY_Return' in df.columns:
+        df['SPY_Target_Return'] = df['SPY_Return'].shift(-1)
 
     # Drop NaN and infinite values created by lagging and rolling windows
     df = df.replace([np.inf, -np.inf], np.nan)

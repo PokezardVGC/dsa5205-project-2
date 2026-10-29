@@ -32,9 +32,13 @@ def backtest_strategy(df, test_index, predictions, initial_capital=100000, trans
     df_bt['Cum_BuyHold'] = initial_capital * (1 + df_bt['BuyHold_Return']).cumprod()
     
     # Benchmark SPY next-period return aligned with execution horizon
-    df_bt['SPY_Return'] = df_bt['SPY'].pct_change().shift(-1)
+    if 'SPY_Target_Return' in df_bt.columns:
+        df_bt['SPY_Return'] = df_bt['SPY_Target_Return']
+    elif 'SPY_Return' in df_bt.columns:
+        df_bt['SPY_Return'] = df_bt['SPY_Return']
+    else:
+        df_bt['SPY_Return'] = df_bt['SPY'].pct_change().shift(-1)
+        
     df_bt['Cum_SPY'] = initial_capital * (1 + df_bt['SPY_Return']).cumprod()
-    # Drop the last row since shift(-1) creates a NaN
-    df_bt = df_bt.dropna()
 
     return df_bt
