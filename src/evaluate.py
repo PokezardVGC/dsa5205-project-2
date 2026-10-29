@@ -17,6 +17,6 @@ def evaluate_and_plot(df_bt):
     print(f"B&H (NVDA) -> Return: {bh_ret*100:.2f}%, Volatility: {bh_vol*100:.2f}%, Sharpe: {bh_sharpe:.2f}")
     print(f"B&H (SPY)  -> Return: {spy_ret*100:.2f}%, Volatility: {spy_vol*100:.2f}%, Sharpe: {spy_sharpe:.2f}")
 
-    print("\nNote: Standard evaluation plotting has been moved to scripts/improved_performance.py")
-    print("Run `python3 scripts/improved_performance.py` to generate the highly detailed tear-sheet charts.")
+    print("\nNote: Evaluation tear-sheet plotting is available in scripts/split_performance.py")
+    print("Run `python scripts/split_performance.py` to generate the detailed performance charts.")
 
