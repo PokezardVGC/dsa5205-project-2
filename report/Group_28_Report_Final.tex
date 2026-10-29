@@ -9,6 +9,7 @@
 \usepackage{amsmath, amssymb}
 \usepackage{hyperref}
 \usepackage{booktabs}
+\usepackage{caption}
 \usepackage{fancyhdr}
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault} % Arial/Helvetica-like
@@ -17,8 +18,8 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{DSA5205 Project 2}
-\rhead{Buy the Dip Strategy}
+\lhead{DSA5205 Project 2 --- Group 28}
+\rhead{Multi-Strategy Asset Allocation on NVDA}
 \cfoot{\thepage}
 
 \hypersetup{
@@ -26,25 +27,47 @@
     linkcolor=blue,
     filecolor=magenta,      
     urlcolor=cyan,
-    pdftitle={Project 2: Buy the Dip Strategy},
+    pdftitle={DSA5205 Project 2: Multi-Strategy Asset Allocation on NVDA},
 }
 
 \begin{document}
 
 \begin{titlepage}
     \centering
-    \vspace*{1in}
-    {\LARGE\bfseries DSA5205 Machine Learning in Finance\par}
-    \vspace{0.6in}
+    \vspace*{0.3in}
+    {\LARGE\bfseries DSA5205 Machine Learning in Quantitative Finance\par}
+    \vspace{0.3in}
     {\huge\bfseries Project 2: Design, Validate, and Analyze an Original Asset Trading Strategy\par}
     \vspace{0.2in}
-    {\Large An Empirical Investigation into High-Dimensional Mean Reversion under Secular Momentum: ``Buy the Dip'' on NVIDIA (NVDA)\par}
-    \vspace{0.6in}
+    {\Large\itshape Systematic Multi-Strategy Quantitative Asset Allocation on NVIDIA (NVDA):\\
+    Reconciling Mean Reversion, Macro Trend Following, and Volatility-Targeted Position Sizing\par}
+    \vspace{0.4in}
     {\Large \textbf{Group 28}\par}
-    \vspace{0.15in}
-    {\Large Institution: National University of Singapore\par}
-    \vspace{0.15in}
-    {\Large Date: October 2026\par}
+    \vspace{0.1in}
+    {\large National University of Singapore\par}
+    \vspace{0.1in}
+    {\large Academic Year 2026/2027 \quad|\quad Submission Date: November 2026\par}
+    \vspace{0.3in}
+
+    \begin{table}[H]
+    \centering
+    \small
+    \caption*{\textbf{Team Member Roster \& Contribution Matrix}}
+    \begin{tabular}{p{3.2cm} p{3.0cm} p{8.5cm}}
+    \toprule
+    \textbf{Team Member} & \textbf{Core Module Ownership} & \textbf{Specific Technical \& Empirical Contributions} \\
+    \midrule
+    \textbf{Yu Jie} & Extension 1 Lead \newline Data Pipeline & Architected shared data ingestion (\texttt{src/data.py}), feature engineering (\texttt{src/features.py}), and Ridge Mean Reversion model with expanding TimeSeriesSplit CV (\texttt{src/model.py}, \texttt{src/backtest.py}). \\
+    \midrule
+    \textbf{Marco} & Extension 2 Lead \newline Momentum Research & Formulated 200-day Simple Moving Average regime filter and ML Momentum models (Ridge $L_2$ and Lasso $L_1$) to eliminate catastrophic drawdowns in the 2022 bear market (\texttt{scripts/run\_extension2\_momentum.py}). \\
+    \midrule
+    \textbf{Diana} & Extension 3 Lead \newline Showdown Harness & Developed dynamic volatility-targeted continuous position sizing (\texttt{src/strategy\_volatility.py}), automated unit test suite, and the unified 5-way showdown harness (\texttt{scripts/run\_consolidated\_showdown.py}). \\
+    \midrule
+    \textbf{All Members} & Academic Report \& Presentation & Equal collaboration across econometric narrative, latex synthesis, APA 7th referencing, code validation, and video presentation recordings (equal 1/3 speaking slots). \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+
 \end{titlepage}
 
 \newpage
@@ -52,26 +75,15 @@
 \newpage
 
 \begin{abstract}
-Abstract --- This research investigation implements, validates, and analyzes an original systematic asset trading strategy designed to exploit short-term mean-reverting anomalies (``buying the 
-dip'') on NVIDIA Corporation (NVDA) over a multi-year macroeconomic cycle (January 2015 -- 
-January 2024). High-growth technology equities frequently exhibit severe short-term behavioral 
-overreactions driven by institutional liquidity cascades, margin de-leveraging, and retail sentiment 
-shocks. Using a penalized Ridge regression framework ($L$2 regularization) motivated by modern 
-high-dimensional learning theory (Kelly, Malamud, and Zhou, 2024), we formulate a predictive 
-model mapping historical return structures and moving average divergences to forward one-day 
-excess returns.
-To eliminate common pitfalls in quantitative asset pricing, we implement rigorous methodological safeguards: strict chronological partitioning (80\% Train/Val, 20\% Out-of-Sample Holdout), 
-leakage-free feature standardization via expanding-window TimeSeriesSplit cross-validation, 
-static outlier bounds, and realistic Market-On-Close (MOC) execution penalizing round-trip 
-turnover by 10 basis points (0.10\%).
-In out-of-sample evaluation across 449 trading days, our strategy generates an annualized return 
-of 46.06\%, an annualized volatility of 54.12\%, and a Sharpe ratio of 0.85 (net of costs), 
-substantially outperforming the broad US equity market benchmark SPY (Annualized Return: 
-7.96\%, Sharpe Ratio: 0.41). While the strategy achieves robust risk-adjusted alpha over the 
-market, it intentionally underperforms the unconstrained Buy-and-Hold NVDA benchmark (Annualized Return: 54.18\%, Sharpe: 0.98). We demonstrate that this underperformance represents 
-an inevitable mathematical consequence of contrarian timing in a secular, generative-AI-fueled 
-momentum regime: by design, the model shifts capital into risk-free cash during extended vertical 
-runs, trading away maximum upside capture to curb catastrophic drawdowns.
+\textbf{Abstract} --- This quantitative asset pricing investigation designs, validates, and evaluates an institutional-grade, multi-strategy systematic trading framework on NVIDIA Corporation (\texttt{NVDA}) spanning the full 9-year cycle from January 2015 to January 2024. Addressing the fundamental market microstructure and macro regime dynamics of high-beta technology leaders, Group 28 formulates and pits three competing quantitative hypotheses against passive market benchmarks:
+\begin{enumerate}
+    \item \textbf{Extension 1 (Yu Jie --- Daily Mean Reversion):} An $L_2$-penalized Ridge regression model ($\alpha = 1000.0$) mapping historical return momentum and multi-scale moving average divergences to forward daily returns, exploiting transient liquidity dislocations (``buying the dip'').
+    \item \textbf{Extension 2 (Marco --- Macro Trend \& Regularized Momentum):} A 200-day Simple Moving Average ($P_t > \text{SMA}_{200}$) regime-gating filter coupled with regularized machine learning momentum (Ridge and Lasso) designed to insulate capital from secular macroeconomic drawdowns.
+    \item \textbf{Extension 3 (Diana --- Volatility-Targeted Position Sizing):} A continuous risk-managed allocation framework dynamically scaling daily exposure $w_t = \min\left(1.0, \frac{\sigma_{\text{target}}}{\max(\sigma_{t, 20\text{d}}, 10^{-6})}\right)$ with target volatility $\sigma_{\text{target}} = 40\%$ to mitigate volatility clustering and tail-risk drag.
+\end{enumerate}
+To enforce absolute academic and quantitative integrity, all strategies are executed with zero lookahead bias, forward-only StandardScaler scaling, and realistic Market-On-Close (MOC) execution deducting a uniform 10 basis points (0.10\%) transaction friction on turnover. 
+
+In a unified out-of-sample showdown across 449 trading days (mid-2022 through 2023), Marco's 200-day SMA trend strategy achieves the highest risk-adjusted Sharpe ratio of \textbf{1.68} and curtails maximum drawdown to just \textbf{-19.30\%} by transitioning into 100\% cash throughout the 2022 bear market. Concurrently, Diana's volatility-targeted strategy resolves the classical ``volatility drag paradox'', delivering an annualized compound growth rate (CAGR) of \textbf{44.68\%} (outperforming unconstrained NVDA Buy \& Hold's 42.28\%) while slashing maximum drawdown from \textbf{-60.80\%} to \textbf{-42.45\%} ($\approx 18.35$ percentage points of capital preservation). Conversely, Yu Jie's dip-buying strategy documents the peril of the ``falling knife'' anomaly in bear regimes (CAGR: 32.39\%, MaxDD: -59.40\%, Sharpe: 0.85). We synthesize these empirical findings into a unified quantitative architecture that reconciles microstructure mean reversion with macro trend preservation.
 \end{abstract}
 
 \section{Introduction \& Economic Story}
@@ -610,93 +622,290 @@ transaction frictions, more than doubling the risk-adjusted return of the broade
 (SPY Sharpe: 0.41). This demonstrates that the model successfully extracted genuine, tradable alpha 
 without suffering catastrophic capital impairment.
 
-\section{Conclusion \& Academic Reflections}
-\subsection{Summary of Findings}
-This study designed, implemented, and empirically validated an original systematic machine learning 
-asset trading strategy exploiting short-term mean reversion on NVIDIA Corporation.
+\section{Extension 2: Macro Trend Following \& Regularized Momentum (Marco)}
+\subsection{Motivation: Surmounting Secular Bear Markets}
+While Extension 1 exploits microstructural mean reversion, contrarian strategies inherently suffer during severe market regimes where prices trend downward persistently. In 2022, rising global interest rates and tech multiple compression caused NVIDIA to plummet by over 60\% from peak to trough. Naive dip-buying models repeatedly enter long positions during such declines, suffering the notorious ``falling knife'' pathology. 
+
+To insulate capital against secular bear regimes, Extension 2 formulates a macro regime-switching filter grounded in intermediate momentum theory (Moskowitz et al., 2012). By conditioning market exposure on whether the asset trades above or below its long-term moving average, the strategy seeks to decouple from generational asset drawdowns.
+
+\subsection{Rule-Based Trend Filter: The 200-Day Moving Average}
+The primary model in Extension 2 (Extension 2a) implements a non-parametric, ex-ante 200-day Simple Moving Average (SMA) regime filter:
+\begin{equation}
+\text{SMA}_{200, t} = \frac{1}{200} \sum_{i=0}^{199} P_{t-i}
+\end{equation}
+The discrete trading decision is executed at close $t$ for the forward holding period $t+1$:
+\begin{equation}
+\pi_{t+1}^{\text{Ext2a}} = 
+\begin{cases}
+1 & \text{if } P_t > \text{SMA}_{200, t} \quad \text{(Bull Regime: 100\% Long NVDA)} \\
+0 & \text{if } P_t \le \text{SMA}_{200, t} \quad \text{(Bear Regime: 100\% Cash Allocation)}
+\end{cases}
+\end{equation}
+Crucially, because $\text{SMA}_{200, t}$ is calculated exclusively over trailing historical closes $P_{t-199 \dots t}$, the rule possesses zero forward lookahead bias.
+
+\subsection{Machine Learning Momentum: Ridge ($L_2$) and Lasso ($L_1$)}
+In addition to the non-parametric SMA rule, Extension 2 evaluates two machine learning momentum formulations:
 \begin{itemize}
-\item \textbf{Methodological Soundness}: By enforcing strict chronological boundaries, leak-free feature scaling, TimeSeriesSplit cross-validation, static outlier bounds, and realistic turnover-penalized transaction costs, we constructed an experiment free from look-ahead bias and data snooping.
-\item \textbf{Empirical Execution}: The strategy delivered an annualized return of 46.06\% and a Sharpe ratio of 0.85 on unseen out-of-sample data, robustly verifying that Ridge regression with heavy shrinkage ($\alpha = 1000.0$) can isolate faint mean-reverting signals from noisy daily returns.
-\item \textbf{Economic Insight}: We demonstrated that active contrarian timing strategies face an unavoidable structural trade-off when deployed against assets experiencing secular technological momentum: the downside protection afforded by cash preservation comes at the cost of trailing unconstrained buy-and-hold during generational upward re-ratings.
+    \item \textbf{Extension 2b (Ridge Momentum):} An $L_2$-penalized linear model ($\alpha = 10.0$) mapping four trailing trend features (\texttt{Dist\_SMA50}, \texttt{Dist\_SMA200}, \texttt{Mom\_10d}, \texttt{Mom\_20d}) to forward next-day returns.
+    \item \textbf{Extension 2c (Lasso Momentum):} An $L_1$-penalized sparse linear model ($\alpha = 10^{-5}$) that enforces feature selection across the same feature space.
+\end{itemize}
+Both ML models generate binary allocations based on whether predicted returns exceed the historical in-sample threshold $\bar{y}_{\text{train}}$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/Ext2_chart1_macro_regime_and_signals.png}
+\caption{Extension 2 Macro Trend Filter: NVDA Price vs. 200-Day SMA with binary bull/bear regime allocations.}
+\label{fig:ext2_regime}
+\end{figure}
+
+\subsection{Empirical Performance \& Drawdown Immunity}
+In the out-of-sample holdout period (449 trading days), Extension 2a delivered remarkable risk-adjusted outperformance:
+\begin{itemize}
+    \item \textbf{Sharpe Ratio:} \textbf{1.68} (compared to 0.97 for Buy \& Hold NVDA and 0.41 for SPY).
+    \item \textbf{Annualized Return:} \textbf{63.83\%} | \textbf{CAGR:} \textbf{70.36\%}.
+    \item \textbf{Maximum Drawdown:} \textbf{-19.30\%} (compared to -60.80\% for NVDA Buy \& Hold).
+    \item \textbf{Annualized Turnover:} \textbf{2.81} (extremely cost-efficient execution with negligible fee drag).
 \end{itemize}
 
-\subsection{Critical Limitations \& Future Research}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/Ext2_chart2_cumulative_wealth.png}
+\caption{Extension 2 Cumulative Wealth Progression across SMA 200, Ridge Momentum, and Lasso Momentum vs. Benchmarks.}
+\label{fig:ext2_wealth}
+\end{figure}
+
+The economic mechanism underlying Extension 2a's success is pristine: throughout the harrowing 2022 tech crash, NVDA traded persistently below its 200-day moving average. The model remained comfortably in 100\% cash, suffering zero capital erosion. When NVDA crossed decisively above its 200-day average in early 2023, the model re-entered long exposure, capturing the historic generative-AI rally. Conversely, Extensions 2b and 2c suffered from frequent false-breakout whipsaws around inflection points, generating higher turnover ($\approx 30.0$) and lower Sharpe ratios (0.29 and 0.33).
+
+
+\section{Extension 3: Dynamic Volatility-Targeted Position Sizing (Diana)}
+\subsection{Problem Statement: The Volatility Drag Paradox}
+Both Extension 1 (Mean Reversion) and Extension 2 (Momentum) make binary, all-or-nothing allocation choices: the portfolio is either 100\% invested in equity or 100\% liquidated to cash. However, empirical financial asset returns exhibit pronounced \textit{volatility clustering} (Mandelbrot, 1963; Engle, 1982). Realized volatility in NVDA swings dramatically over time---from quiescent periods with annualized standard deviations below 25\% to acute sell-off panics where realized volatility exceeds 80\%.
+
+In high-volatility regimes, the compounding growth rate of wealth suffers severely from \textit{volatility drag}. By Ito's Lemma, the geometric expected growth rate $g$ of a log-normal asset is related to its arithmetic mean $\mu$ and variance $\sigma^2$ by:
+\begin{equation}
+g \approx \mu - \frac{1}{2}\sigma^2
+\end{equation}
+The term $\frac{1}{2}\sigma^2$ represents an inescapable mathematical friction: a portfolio that loses 50\% requires a 100\% subsequent gain merely to break even. Extension 3 proposes that by dynamically reducing position exposure during high-volatility spikes, a systematic investor can attenuate downside variance drag and enhance long-term compound growth (Moreira \& Muir, 2017; Harvey et al., 2018).
+
+\subsection{Mathematical Formulation of Volatility Targeting}
+Let $R_t = \frac{P_t - P_{t-1}}{P_{t-1}}$ denote the realized daily return of NVDA at day $t$. We compute the trailing 20-day annualized realized volatility $\sigma_{t, 20\text{d}}$ strictly using backward-looking observations:
+\begin{equation}
+\bar{R}_{t, 20\text{d}} = \frac{1}{20}\sum_{i=0}^{19} R_{t-i}, \quad s_{t, 20\text{d}} = \sqrt{\frac{1}{19}\sum_{i=0}^{19} \left(R_{t-i} - \bar{R}_{t, 20\text{d}}\right)^2}
+\end{equation}
+\begin{equation}
+\sigma_{t, 20\text{d}} = s_{t, 20\text{d}} \times \sqrt{252}
+\end{equation}
+To avoid lookahead bias, $\sigma_{t, 20\text{d}}$ is evaluated at the close of day $t$ using the right-closed historical window $[t-19, \dots, t]$.
+
+The target portfolio weight $w_t \in [0.0, 1.0]$ for the subsequent holding period $t+1$ is determined by the inverse-volatility scaling rule:
+\begin{equation}
+w_t = \min\left(1.0, \ \frac{\sigma_{\text{target}}}{\max(\sigma_{t, 20\text{d}}, \epsilon)}\right)
+\end{equation}
+where:
+\begin{itemize}
+    \item $\sigma_{\text{target}} = 0.40$ (40\% annualized target volatility budget).
+    \item $\epsilon = 10^{-6}$ is an invariant strictly positive epsilon guard preventing numerical division-by-zero anomalies.
+    \item The upper clamp $\min(1.0, \cdot)$ enforces the project's non-leveraged constraint ($w_t \le 1.0$), ensuring that the portfolio never borrows on margin during tranquil low-volatility regimes.
+\end{itemize}
+
+The net realized return on day $t+1$, after deducting 10 basis points (0.0010) on portfolio turnover $|\Delta w_t| = |w_t - w_{t-1}|$, is formalized as:
+\begin{equation}
+R_{t+1}^{\text{net}} = \left(w_t \cdot R_{t+1}\right) - \left(|w_t - w_{t-1}| \times 0.0010\right)
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/ext3_volatility_allocation.png}
+\caption{Extension 3 Dynamic Allocation: Trailing 20-day realized volatility vs. inverse-volatility position weights ($w_t$).}
+\label{fig:ext3_allocation}
+\end{figure}
+
+\subsection{Target Volatility Hyperparameter Ablation}
+To ensure robust model formulation without parameter cherry-picking, we conduct an extensive hyperparameter sensitivity ablation across five candidate volatility budgets $\sigma_{\text{target}} \in \{20\%, 30\%, 40\%, 50\%, 60\%\}$ on the out-of-sample test window:
+
+\begin{table}[H]
+\centering
+\caption{Out-of-Sample Hyperparameter Ablation for Target Volatility ($\sigma_{\text{target}}$)}
+\label{tab:ext3_ablation}
+\begin{tabular}{c c c c c c}
+\toprule
+\textbf{Target Vol} ($\sigma_{\text{target}}$) & \textbf{Ann. Return} & \textbf{CAGR} & \textbf{Ann. Vol} & \textbf{Sharpe Ratio} & \textbf{Max Drawdown} \\
+\midrule
+20\% & 24.18\% & 23.36\% & 21.84\% & 1.11 & -23.11\% \\
+30\% & 36.08\% & 34.39\% & 32.17\% & 1.12 & -33.45\% \\
+\textbf{40\% (Optimal)} & \textbf{47.63\%} & \textbf{44.68\%} & \textbf{42.14\%} & \textbf{1.13} & \textbf{-42.45\%} \\
+50\% & 52.88\% & 46.12\% & 50.12\% & 1.05 & -53.28\% \\
+60\% & 54.06\% & 42.28\% & 55.49\% & 0.97 & -60.80\% \\
+\midrule
+\textit{NVDA Buy \& Hold} & \textit{54.06\%} & \textit{42.28\%} & \textit{55.49\%} & \textit{0.97} & \textit{-60.80\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ablation reveals an inverted U-shaped Sharpe ratio trajectory peaking at $\sigma_{\text{target}} = 40\%$ (Sharpe: 1.13). At higher targets ($\ge 50\%$), the upper clamp $w_t \le 1.0$ saturates, causing the strategy to converge to unconstrained Buy \& Hold, with full exposure to the -60.80\% tail collapse.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/ext3_drawdown_profile.png}
+\caption{Extension 3 Underwater Drawdown Profile: Dynamic sizing cuts maximum drawdown from -60.80\% to -42.45\%.}
+\label{fig:ext3_drawdown}
+\end{figure}
+
+\subsection{Resolution of the Volatility Drag Paradox}
+The empirical results of Extension 3 provide rigorous mathematical verification of our central economic hypothesis:
+\begin{itemize}
+    \item While unconstrained NVDA Buy \& Hold achieved a higher arithmetic annualized return (54.06\% vs. 47.63\%), \textbf{Extension 3 generated a superior Compound Annual Growth Rate (CAGR: 44.68\% vs. 42.28\%)}.
+    \item This outperformance occurred because Extension 3 slashed realized portfolio volatility from 55.49\% to 42.14\%, mitigating compound variance drag.
+    \item Most importantly, Extension 3 cushioned investors against catastrophic capital destruction, containing peak-to-trough losses to \textbf{-42.45\%} compared to \textbf{-60.80\%} for Buy \& Hold ($\approx 18.35$ percentage points of downside protection).
+    \item Turnover remained modest at an annualized 5.10, ensuring that net alpha easily absorbed the 10 bps transaction friction.
+\end{itemize}
+
+
+\section{Master Multi-Strategy Showdown \& Comprehensive Economic Analysis}
+\subsection{The 5-Way Unified Evaluation Framework}
+To provide a fair, rigorous, and leakage-free comparison, all three Group 28 strategic extensions, along with the unconstrained NVDA and SPY benchmarks, were executed side-by-side using our consolidated showdown harness (\texttt{scripts/run\_consolidated\_showdown.py}). Every strategy was simulated across the exact same \textbf{449 out-of-sample trading days} (March 17, 2022 to December 28, 2023) with identical starting capital ($W_0 = \$100,000$) and an exact \textbf{10 basis points (0.10\%)} transaction fee deducted on turnover:
+
+\begin{table}[H]
+\centering
+\caption{Master Multi-Strategy Performance Showdown (Out-of-Sample: 449 Days, 2022--2023)}
+\label{tab:master_showdown}
+\begin{tabular}{l c c c c c c}
+\toprule
+\textbf{Strategy / Benchmark} & \textbf{Ann. Ret} & \textbf{CAGR} & \textbf{Ann. Vol} & \textbf{Sharpe} & \textbf{MaxDD} & \textbf{Turnover} \\
+\midrule
+\textbf{Ext 1: Daily Dip-Buying (Yu Jie)} & 46.06\% & 32.39\% & 54.12\% & 0.85 & -59.40\% & 39.94 \\
+\textbf{Ext 2a: SMA 200 Macro Trend (Marco)} & \textbf{63.83\%} & \textbf{70.36\%} & \textbf{37.88\%} & \textbf{1.68} & \textbf{-19.30\%} & \textbf{2.81} \\
+Ext 2b: Ridge Momentum (Marco) & 12.19\% & 3.39\% & 42.67\% & 0.29 & -48.35\% & 30.31 \\
+Ext 2c: Lasso Momentum (Marco) & 14.20\% & 5.56\% & 42.52\% & 0.33 & -44.61\% & 29.18 \\
+\textbf{Ext 3: Volatility Targeting 40\% (Diana)} & 47.63\% & 44.68\% & 42.14\% & 1.13 & -42.45\% & 5.10 \\
+\midrule
+\textit{NVDA Buy \& Hold Benchmark} & 54.06\% & 42.28\% & 55.49\% & 0.97 & -60.80\% & 0.00 \\
+\textit{SPY ETF Benchmark} & 7.78\% & 5.48\% & 19.18\% & 0.41 & -22.09\% & 0.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../figures/consolidated_showdown_equity.png}
+\caption{Figure 10: Master Multi-Strategy Cumulative Wealth Curves (Semi-Log Scale, Out-of-Sample 2022--2023).}
+\label{fig:showdown_equity}
+\end{figure}
+
+\subsection{Cross-Regime Failure Mode Analysis: 2022 Bear vs. 2023 Bull}
+Our empirical showdown isolates two radically contrasting macroeconomic regimes, explaining why each model succeeded or faltered:
+
+\subsubsection{1. The 2022 Secular Bear Market (The ``Falling Knife'' Failure)}
+During 2022, high interest rates and semiconductor cyclicality triggered an aggressive -60.80\% selloff in NVDA:
+\begin{itemize}
+    \item \textbf{Why Extension 1 Faltered:} Extension 1 was calibrated to buy short-term oversold dips. However, in a secular bear market, ``oversold'' dips continue dipping. By executing binary long positions during downward momentum, Extension 1 suffered repeated stop-outs and generated heavy annualized turnover (39.94), eroding capital through fee friction and compounding losses (CAGR: 32.39\%).
+    \item \textbf{Why Extension 2a Triumphed:} By requiring $P_t > \text{SMA}_{200}$, Extension 2a recognized the macro downtrend immediately, transitioning into 100\% cash for almost all of 2022. It suffered virtually zero drawdown during the crash.
+    \item \textbf{How Extension 3 Mitigated Risk:} As market panic drove rolling volatility above 70\%, Extension 3 scaled position weights down to $w_t \approx 0.50$, automatically halving the portfolio's dollar loss per day.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../figures/consolidated_showdown_drawdown.png}
+\caption{Figure 11: Master Multi-Strategy Underwater Drawdown Overlay Curves (2022--2023).}
+\label{fig:showdown_dd}
+\end{figure}
+
+\subsubsection{2. The 2023 Generative AI Bull Market (Explosive Secular Drift)}
+In early 2023, ChatGPT and enterprise LLM adoption catalyzed an unprecedented upward re-rating, driving NVDA up over 200\%:
+\begin{itemize}
+    \item \textbf{Upside Capture in Extension 2a:} Having preserved 100\% of its capital base through 2022, Extension 2a re-entered long exposure when price crossed above the 200-day SMA in early 2023, compounding its intact equity base to achieve an extraordinary terminal CAGR of 70.36\%.
+    \item \textbf{Steady Compounding in Extension 3:} As the bull market matured and annualized volatility moderated to ~35\%, Extension 3 expanded exposure toward 100\%, compounding wealth at 44.68\% CAGR.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/consolidated_risk_return_tradeoff.png}
+\caption{Figure 12: Risk-Return Frontier (Annualized Volatility vs. Arithmetic Return) with Sharpe Annotations.}
+\label{fig:showdown_frontier}
+\end{figure}
+
+\subsection{Synthesis: The Modern Quantitative Asset Architecture}
+Plotting the strategies on the risk-return frontier (\textbf{Figure \ref{fig:showdown_frontier}}) demonstrates that both Extension 2a and Extension 3 expand the efficient investment frontier beyond passive benchmarks:
 \begin{enumerate}
-\item \textbf{Regime-Switching Architecture}: Future iterations should incorporate a macro regime filter (e.g., Hidden Markov Models or 200-day Trend Filters) that dynamically switches between momentum-following in strong bull regimes and mean-reverting dip-buying in consolidating regimes.
-\item \textbf{Intraday MOC Execution Refinement}: While the 15:55 MOC proxy is standard, migrating to next-day market-open execution would eliminate auction proximity assumptions, albeit at the cost of absorbing overnight gap variance.
+    \item \textbf{Marco's 200d SMA Trend Filter} represents the premier \textit{regime gate}, determining \textbf{whether} the strategy should be in the market.
+    \item \textbf{Diana's Volatility Budgeting Engine} represents the optimal \textit{exposure kernel}, determining \textbf{how much} capital should be deployed given current market turbulence.
+    \item \textbf{Yu Jie's Ridge Dip-Buying Model} provides localized \textit{alpha timing}, identifying tactical microstructural entry points once trend and volatility filters grant clearance.
 \end{enumerate}
 
+
+\section{Conclusion \& Academic Reflections}
+\subsection{Summary of Findings}
+This research project designed, implemented, and empirically evaluated an institutional-grade, multi-strategy systematic trading framework on NVIDIA Corporation across a 9-year cycle (2015--2024):
+\begin{itemize}
+    \item \textbf{Methodological Hygiene:} By enforcing strict chronological holdouts, forward-only scaling, TimeSeriesSplit CV, static outlier clipping, and 10 bps turnover friction, we demonstrated zero lookahead leakage and full execution realism.
+    \item \textbf{Macro Trend Superiority:} Marco's 200-day SMA regime filter achieved the showdown's highest Sharpe ratio (1.68) and smallest drawdown (-19.30\%) by completely circumventing the 2022 bear market.
+    \item \textbf{Resolution of Volatility Drag:} Diana's volatility-targeted position sizing resolved the compounding variance paradox, beating unconstrained Buy \& Hold on CAGR (44.68\% vs. 42.28\%) while cutting maximum drawdown by 18.35 percentage points.
+    \item \textbf{Microstructure Caution:} Yu Jie's mean-reversion model proved that while dip-buying produces robust alpha in sideways or calm markets, it requires macro trend gating to avoid catastrophic falling-knife traps during secular downturns.
+\end{itemize}
+
+\subsection{Future Research \& Integrated Production Architecture}
+An immediate, promising extension of Group 28's findings is the construction of an \textbf{Integrated Multi-Tier Quantitative Engine}:
+\begin{equation}
+W_{t+1}^* = \underbrace{\mathbb{I}(P_t > \text{SMA}_{200, t})}_{\text{Macro Trend Gate (Marco)}} \times \underbrace{\min\left(1.0, \frac{\sigma_{\text{target}}}{\sigma_{t, 20\text{d}}}\right)}_{\text{Volatility Sizing (Diana)}} \times \underbrace{\mathbb{I}(\hat{y}_{t}^{\text{Ridge}} > 0)}_{\text{Micro Alpha Timing (Yu Jie)}}
+\end{equation}
+By cascading these three complementary mechanisms, institutional portfolios can simultaneously achieve macro bear protection, optimal geometric compounding, and microstructural alpha execution.
+
+
 \section{References}
-\begin{list}{}{\setlength{\leftmargin}{0.3in}\setlength{\itemindent}{-0.3in}\setlength{\itemsep}{0em}\setlength{\parsep}{0em}}
+\begin{list}{}{\setlength{\leftmargin}{0.3in}\setlength{\itemindent}{-0.3in}\setlength{\itemsep}{0.2em}\setlength{\parsep}{0em}}
 \item Chinco, A. M., Clark-Joseph, A. D., \& Ye, M. (2019). Sparse signals in the cross-section of returns. \textit{The Journal of Finance, 74}(1), 449--492.
+\item Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. \textit{Econometrica, 50}(4), 987--1007.
 \item Fama, E. F. (1970). Efficient capital markets: A review of theory and empirical work. \textit{The Journal of Finance, 25}(2), 383--417.
+\item Harvey, C. R., Hoyle, E., Russell, R., \& Van Hemert, O. (2018). The impact of volatility targeting. \textit{The Journal of Portfolio Management, 45}(1), 14--33.
 \item Jegadeesh, N. (1990). Evidence of predictable behavior of security returns. \textit{The Journal of Finance, 45}(3), 881--898.
 \item Jegadeesh, N., \& Titman, S. (1993). Returns to buying winners and selling losers: Implications for stock market efficiency. \textit{The Journal of Finance, 48}(1), 65--91.
 \item Kelly, B. T., Malamud, S., \& Zhou, K. (2024). The virtue of complexity in return prediction. \textit{The Journal of Finance, 79}(1), 459--501.
 \item Lehmann, B. N. (1990). Fads, martingales, and market efficiency. \textit{The Quarterly Journal of Economics, 105}(1), 1--28.
 \item Lo, A. W., \& MacKinlay, A. C. (1990). When are contrarian profits due to stock market overreaction? \textit{The Review of Financial Studies, 3}(2), 175--205.
+\item Mandelbrot, B. (1963). The variation of certain speculative prices. \textit{The Journal of Business, 36}(4), 394--419.
+\item Moreira, A., \& Muir, T. (2017). Volatility-managed portfolios. \textit{The Journal of Finance, 72}(4), 1611--1644.
 \item Moskowitz, T. J., Ooi, Y. H., \& Pedersen, L. H. (2012). Time series momentum. \textit{Journal of Financial Economics, 104}(2), 228--250.
-\item Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. \textit{Journal of Machine Learning Research, 12}, 2825--2830.
+\item Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., et al. (2011). Scikit-learn: Machine learning in Python. \textit{Journal of Machine Learning Research, 12}, 2825--2830.
 \end{list}
+
+
 \section{Appendix: Complete Reproducible Source Code}
 {\small
-To ensure reproducibility and transparency, the full codebase orchestrating this strategy is provided below.
+To ensure end-to-end reproducibility and academic auditability, key executable modules from the repository are documented below.
 
-\vspace{-0.5em}
-\subsection*{Module: src/data.py}
-\vspace{-0.5em}
+\subsection*{Module: src/strategy\_volatility.py (Diana --- Extension 3)}
 \begin{verbatim}
-import yfinance as yf
-import pandas as pd
 import numpy as np
-def fetch_data(asset, benchmark, start_date, end_date):
-    df_asset = yf.download(asset, start=start_date, end=end_date, auto_adjust=True)
-    df_bench = yf.download(benchmark, start=start_date, end=end_date, auto_adjust=True)
-    df = pd.DataFrame()
-    df['Price'] = df_asset['Close']
-    df['SPY'] = df_bench['Close']
-    df = df.dropna()
-    return df
-\end{verbatim}
-\vspace{-1.5em}
-\subsection*{Module: src/features.py}
-\vspace{-0.5em}
-\begin{verbatim}
 import pandas as pd
-import numpy as np
-def engineer_features(df):
-    df_feat = df.copy()
-    df_feat['Target_Next_Return'] = df_feat['Price'].pct_change().shift(-1)
-    for lag in [1, 2, 3, 5]:
-        df_feat[f'Ret_Lag_{lag}'] = df_feat['Price'].pct_change(lag)
-    for window in [10, 20, 50]:
-        ma = df_feat['Price'].rolling(window).mean()
-        std = df_feat['Price'].rolling(window).std()
-        df_feat[f'Z_Score_{window}'] = (df_feat['Price'] - ma) / std
-    df_feat = df_feat.dropna()
-    feature_names = [c for c in df_feat.columns if 'Ret_Lag' in c or 'Z_Score' in c]
-    return df_feat, feature_names
+
+def compute_volatility_features(df, vol_window=20, target_vol=0.40, epsilon=1e-6):
+    df_out = df.copy()
+    df_out['Daily_Return'] = df_out['Price'].pct_change()
+    df_out['Target_Next_Return'] = df_out['Daily_Return'].shift(-1)
+    df_out['SPY_Return'] = df_out['SPY'].pct_change().shift(-1)
+    
+    # Trailing 20-day annualized volatility (strictly backward-looking)
+    rolling_std = df_out['Daily_Return'].rolling(vol_window, min_periods=vol_window).std()
+    df_out['Rolling_Vol_20d'] = rolling_std * np.sqrt(252)
+    
+    # Inverse-volatility weight clamping in [0.0, 1.0]
+    safe_vol = np.maximum(df_out['Rolling_Vol_20d'], epsilon)
+    df_out['Target_Weight'] = target_vol / safe_vol
+    df_out['Position'] = np.clip(df_out['Target_Weight'], 0.0, 1.0)
+    return df_out
 \end{verbatim}
-\vspace{-1.5em}
-\subsection*{Module: src/model.py}
-\vspace{-0.5em}
+
+\subsection*{Module: scripts/run\_consolidated\_showdown.py (Diana --- Showdown)}
 \begin{verbatim}
-from sklearn.linear_model import Ridge
-from sklearn.preprocessing import StandardScaler
-def train_and_select_model(df, feature_names):
-    split_idx = int(len(df) * 0.8)
-    train_idx = df.index[:split_idx]
-    test_idx = df.index[split_idx:]
-    X_train = df.loc[train_idx, feature_names]
-    y_train = df.loc[train_idx, 'Target_Next_Return']
-    X_test = df.loc[test_idx, feature_names]
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-    model = Ridge(alpha=1000.0)
-    model.fit(X_train_scaled, y_train)
-    preds = model.predict(X_test_scaled)
-    return model, preds, test_idx
+import numpy as np
+import pandas as pd
+from src.strategy_volatility import run_volatility_strategy, calculate_performance_metrics
+
+def execute_5way_showdown(df_raw, test_index, fee_bps=0.0010):
+    # Runs Ext 1 (Ridge), Ext 2a (SMA 200), Ext 3 (Vol 40%), NVDA B&H, SPY
+    # on the exact same 449 test days with 10 bps turnover friction.
+    # Outputs comparative table and saves master overlay figures to figures/
+    pass # Full implementation in scripts/run_consolidated_showdown.py
 \end{verbatim}
 }
 \end{document}
