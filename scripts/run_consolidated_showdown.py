@@ -133,25 +133,25 @@ def run_showdown(
     # Compute standardized performance dictionary
     results: Dict[str, Dict[str, float]] = {
         "Ext 1: Daily Dip-Buying (Yu Jie)": calculate_performance_metrics(
-            df_ext1["Strategy_Return"], df_ext1["Cum_Strategy"], df_ext1["Position_Change"]
+            df_ext1["Strategy_Return"], df_ext1["Cum_Strategy"], df_ext1["Position_Change"], initial_capital=initial_capital
         ),
         "Ext 2a: SMA 200 Macro Trend (Marco)": calculate_performance_metrics(
-            test_m["Ret_2a"], test_m["Cum_2a"], test_m["Chg_2a"]
+            test_m["Ret_2a"], test_m["Cum_2a"], test_m["Chg_2a"], initial_capital=initial_capital
         ),
         "Ext 2b: Ridge Momentum (Marco)": calculate_performance_metrics(
-            test_m["Ret_2b"], test_m["Cum_2b"], test_m["Chg_2b"]
+            test_m["Ret_2b"], test_m["Cum_2b"], test_m["Chg_2b"], initial_capital=initial_capital
         ),
         "Ext 2c: Lasso Momentum (Marco)": calculate_performance_metrics(
-            test_m["Ret_2c"], test_m["Cum_2c"], test_m["Chg_2c"]
+            test_m["Ret_2c"], test_m["Cum_2c"], test_m["Chg_2c"], initial_capital=initial_capital
         ),
         "Ext 3: Volatility Targeting 40% (Diana)": calculate_performance_metrics(
-            df_ext3["Strategy_Return"], df_ext3["Cum_Strategy"], df_ext3["Position_Change"]
+            df_ext3["Strategy_Return"], df_ext3["Cum_Strategy"], df_ext3["Position_Change"], initial_capital=initial_capital
         ),
         "NVDA Buy & Hold Benchmark": calculate_performance_metrics(
-            df_ext3["BuyHold_Return"], df_ext3["Cum_BuyHold"], pd.Series(0.0, index=test_idx)
+            df_ext3["BuyHold_Return"], df_ext3["Cum_BuyHold"], pd.Series(0.0, index=test_idx), initial_capital=initial_capital
         ),
         "SPY ETF Benchmark": calculate_performance_metrics(
-            df_ext3["SPY_Return"], df_ext3["Cum_SPY"], pd.Series(0.0, index=test_idx)
+            df_ext3["SPY_Return"], df_ext3["Cum_SPY"], pd.Series(0.0, index=test_idx), initial_capital=initial_capital
         ),
     }
 
