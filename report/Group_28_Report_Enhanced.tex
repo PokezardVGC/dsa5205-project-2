@@ -114,7 +114,7 @@ Poh Yu Jie & A0216055M \\
 
 This study evaluates whether systematic trading strategies can capture the long-term growth of NVIDIA Corporation (NVDA) while reducing the severe drawdowns associated with holding a single high-volatility stock. Between 2015 and 2023, NVDA's split-adjusted share price rose more than 100-fold, but passive investors endured drawdowns of $-56.0\%$ in 2018 and $-66.3\%$ in 2022. To address this risk-return trade-off, three systematic strategies are compared within a common backtesting framework: (1) short-term mean reversion using Ridge regression, (2) trend following using a 200-day simple moving average (SMA) filter alongside regularized momentum models, and (3) dynamic position sizing based on 20-day realized volatility.
 
-All strategies are evaluated over an identical 80/20 chronological split covering 449 out-of-sample trading days from March 2022 to December 2023, net of a 10 basis point transaction cost. The 200-day SMA trend-following rule delivered the strongest performance, achieving a Sharpe ratio of 1.68, a compound annual growth rate (CAGR) of 70.36\%, and a maximum drawdown of $-19.30\%$, compared with a Sharpe ratio of 0.97 and a $-60.80\%$ drawdown for buy-and-hold NVDA. Volatility targeting at a 40\% annualized target also improved compounding efficiency, generating a 44.68\% CAGR (versus 42.28\% for buy-and-hold) while reducing maximum drawdown to $-42.45\%$. By contrast, daily mean reversion underperformed during the 2022 bear market because it repeatedly bought into a sustained decline, resulting in a Sharpe ratio of 0.85 and a $-59.40\%$ drawdown. Overall, the results show that simple regime filtering and volatility control were more effective than short-horizon return prediction for managing downside risk in NVDA during 2022--2023.
+All strategies are evaluated over an identical 80/20 chronological split covering 449 out-of-sample trading days from March 2022 to December 2023, net of a 10 basis point transaction cost. The 200-day SMA trend-following rule delivered the strongest performance, achieving a Sharpe ratio of 1.68, a compound annual growth rate (CAGR) of 76.68\%, and a maximum drawdown of $-19.30\%$, compared with a Sharpe ratio of 0.97 and a $-60.80\%$ drawdown for buy-and-hold NVDA. Volatility targeting at a 40\% annualized target also improved risk-adjusted efficiency, delivering a 47.69\% CAGR (matching 47.64\% for buy-and-hold) while reducing maximum drawdown from $-60.80\%$ to $-42.45\%$ and increasing Sharpe ratio to 1.13. By contrast, daily mean reversion underperformed during the 2022 bear market because it repeatedly bought into a sustained decline, resulting in a Sharpe ratio of 0.85 and a $-59.40\%$ drawdown (CAGR: 37.22\%). Overall, the results show that simple regime filtering and volatility control were more effective than short-horizon return prediction for managing downside risk in NVDA during 2022--2023.
 
 % =====================================================================
 % 4. RESEARCH PROBLEM
@@ -411,7 +411,7 @@ All experiments are implemented in Python 3.14.6 using NumPy 2.5.4, pandas 3.0.6
 \section{Results}
 \label{sec:results}
 
-Across the 449 out-of-sample trading days from 17 March 2022 to 28 December 2023 (net of 10 bps transaction costs), the simple 200-day moving average rule (Strategy 2a) outperformed both the machine learning models and passive buy-and-hold investing. By moving to cash during the 2022 downturn, Strategy 2a achieved a Sharpe ratio of 1.68, a CAGR of 70.36\%, and a maximum drawdown of $-19.30\%$, compared with a Sharpe ratio of 0.97 and a $-60.80\%$ drawdown for NVDA buy-and-hold. Volatility targeting at 40\% (Strategy 3) also improved compound growth over buy-and-hold (44.68\% vs.\ 42.28\% CAGR) while reducing maximum drawdown to $-42.45\%$. By contrast, daily mean reversion (Strategy 1) remained heavily exposed during the 2022 decline and experienced a $-59.40\%$ drawdown.
+Across the 449 out-of-sample trading days from 17 March 2022 to 28 December 2023 (net of 10 bps transaction costs), the simple 200-day moving average rule (Strategy 2a) outperformed both the machine learning models and passive buy-and-hold investing. By moving to cash during the 2022 downturn, Strategy 2a achieved a Sharpe ratio of 1.68, a CAGR of 76.68\%, and a maximum drawdown of $-19.30\%$, compared with a Sharpe ratio of 0.97 and a $-60.80\%$ drawdown for NVDA buy-and-hold. Volatility targeting at 40\% (Strategy 3) delivered a 47.69\% CAGR (matching buy-and-hold's 47.64\%) while reducing maximum drawdown from $-60.80\%$ to $-42.45\%$ and increasing Sharpe ratio to 1.13. By contrast, daily mean reversion (Strategy 1) remained heavily exposed during the 2022 decline and experienced a $-59.40\%$ drawdown (CAGR: 37.22\%).
 
 \subsection{Prediction Accuracy}
 \label{sec:res_accuracy}
@@ -472,22 +472,22 @@ Table~\ref{tab:master_showdown} compares out-of-sample risk and return metrics a
 \toprule
 \textbf{Strategy / Benchmark} & \textbf{Ann.\ Ret} & \textbf{CAGR} & \textbf{Ann.\ Vol} & \textbf{Sharpe} & \textbf{MaxDD} & \textbf{Turnover} & \textbf{Final Wealth} \\
 \midrule
-Strategy 1: Mean Reversion (Ridge) & 45.96\% & 32.31\% & 54.06\% & 0.85 & $-59.40\%$ & 39.85 & \$175,738 \\
-\textbf{Strategy 2a: 200-Day SMA Trend} & \textbf{63.83\%} & \textbf{70.36\%} & \textbf{37.88\%} & \textbf{1.68} & \textbf{-19.30\%} & \textbf{2.81} & \textbf{\$275,699} \\
+Strategy 1: Mean Reversion (Ridge) & 45.96\% & 37.22\% & 54.06\% & 0.85 & $-59.40\%$ & 39.85 & \$175,738 \\
+\textbf{Strategy 2a: 200-Day SMA Trend} & \textbf{63.83\%} & \textbf{76.68\%} & \textbf{37.88\%} & \textbf{1.68} & \textbf{-19.30\%} & \textbf{2.81} & \textbf{\$275,699} \\
 Strategy 2b: Ridge Momentum & 12.19\% & 3.39\% & 42.67\% & 0.29 & $-48.35\%$ & 30.31 & \$106,113 \\
 Strategy 2c: Lasso Momentum & 14.20\% & 5.56\% & 42.52\% & 0.33 & $-44.61\%$ & 29.18 & \$110,117 \\
-\textbf{Strategy 3: Volatility Targeting (40\%)} & 47.63\% & 44.68\% & 42.14\% & 1.13 & $-42.45\%$ & 5.10 & \$200,316 \\
+\textbf{Strategy 3: Volatility Targeting (40\%)} & 47.63\% & 47.69\% & 42.14\% & 1.13 & $-42.45\%$ & 5.10 & \$200,316 \\
 \midrule
-\textit{NVDA Buy \& Hold Benchmark} & 54.06\% & 42.28\% & 55.49\% & 0.97 & $-60.80\%$ & 0.00 & \$200,201 \\
-\textit{SPY ETF Benchmark} & 7.78\% & 5.48\% & 19.18\% & 0.41 & $-22.09\%$ & 0.00 & \$111,176 \\
+\textit{NVDA Buy \& Hold Benchmark} & 54.06\% & 47.64\% & 55.49\% & 0.97 & $-60.80\%$ & 0.00 & \$200,201 \\
+\textit{SPY ETF Benchmark} & 7.78\% & 6.13\% & 19.18\% & 0.41 & $-22.09\%$ & 0.00 & \$111,176 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 Three findings stand out from Table~\ref{tab:master_showdown}:
 \begin{itemize}
-    \item \textbf{Trend Following Outperformance:} Strategy 2a achieved the highest risk-adjusted return, with a Sharpe ratio of 1.68, a CAGR of 70.36\%, and a maximum drawdown of $-19.30\%$.
-    \item \textbf{Reduced Volatility Drag:} Strategy 3 generated a higher CAGR than NVDA Buy \& Hold (44.68\% vs.\ 42.28\%) while lowering annualized volatility by 13.35 percentage points and cutting maximum drawdown from $-60.80\%$ to $-42.45\%$.
+    \item \textbf{Trend Following Outperformance:} Strategy 2a achieved the highest risk-adjusted return, with a Sharpe ratio of 1.68, a CAGR of 76.68\%, and a maximum drawdown of $-19.30\%$.
+    \item \textbf{Reduced Volatility Drag \& Capital Protection:} Strategy 3 matched the long-term compounding rate of unconstrained Buy \& Hold (47.69\% vs.\ 47.64\% CAGR, delivering \$200,316 vs. \$200,201 terminal wealth) while lowering annualized volatility by 13.35 percentage points (42.14\% vs.\ 55.49\%) and cutting maximum drawdown from $-60.80\%$ to $-42.45\%$.
     \item \textbf{Low-Turnover Advantage:} Strategy 2a had an annualized turnover of 2.81 (costing about 0.28\% per year), whereas Strategy 1's turnover of 39.85 reduced annual returns by roughly 3.99\%.
 \end{itemize}
 
@@ -699,7 +699,7 @@ Based on the 449 out-of-sample trading days for NVDA from March 2022 to December
 \begin{enumerate}
     \item \textbf{H1 (Mean Reversion): Not Supported Out-of-Sample.} In the training sample, Ridge regression learned negative coefficients on same-day returns (\texttt{Ret\_0}) and moving-average distances (\texttt{Dist\_MA10}, \texttt{Dist\_MA20}), which is directionally consistent with short-term reversal. However, in-sample coefficient signs alone do not establish out-of-sample predictive power or trading profitability. On the holdout test set, predictive accuracy was negative ($\text{OOS } R^2 = -0.00245$ vs.\ zero and $-0.00603$ vs.\ the training mean), and repeated dip-buying during the 2022 bear market produced a $-59.40\%$ maximum drawdown and a lower Sharpe ratio (0.85) than passive NVDA Buy \& Hold (0.97).
     \item \textbf{H2 (Trend Following): Supported for the 200-Day SMA Rule.} Conditioning exposure on the 200-day moving average avoided most of the 2022 downturn, achieving the highest Sharpe ratio (1.68) and lowest maximum drawdown ($-19.30\%$) in the test sample. By contrast, fitted Ridge and Lasso momentum models were sensitive to the exact training split date.
-    \item \textbf{H3 (Volatility Targeting): Supported.} Scaling position sizes inversely to 20-day realized volatility reduced variance drag, increasing CAGR from 42.28\% (Buy \& Hold) to 44.68\% while reducing maximum drawdown from $-60.80\%$ to $-42.45\%$.
+    \item \textbf{H3 (Volatility Targeting): Supported.} Scaling position sizes inversely to 20-day realized volatility reduced variance drag, delivering an identical CAGR of 47.69\% to unconstrained Buy \& Hold (47.64\%, \$200,316 vs. \$200,201 terminal wealth) while reducing maximum drawdown from $-60.80\%$ to $-42.45\%$ and boosting Sharpe ratio from 0.97 to 1.13.
 \end{enumerate}
 
 \subsection{Key Findings}

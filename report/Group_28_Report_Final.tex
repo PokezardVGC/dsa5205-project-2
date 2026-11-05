@@ -83,7 +83,7 @@
 \end{enumerate}
 To enforce absolute academic and quantitative integrity, all strategies are executed with zero lookahead bias, forward-only StandardScaler scaling, and realistic Market-On-Close (MOC) execution deducting a uniform 10 basis points (0.10\%) transaction friction on turnover. 
 
-In a unified out-of-sample showdown across 449 trading days (mid-2022 through 2023), Marco's 200-day SMA trend strategy achieves the highest risk-adjusted Sharpe ratio of \textbf{1.68} and curtails maximum drawdown to just \textbf{-19.30\%} by transitioning into 100\% cash throughout the 2022 bear market. Concurrently, Diana's volatility-targeted strategy resolves the classical ``volatility drag paradox'', delivering an annualized compound growth rate (CAGR) of \textbf{44.68\%} (outperforming unconstrained NVDA Buy \& Hold's 42.28\%) while slashing maximum drawdown from \textbf{-60.80\%} to \textbf{-42.45\%} ($\approx 18.35$ percentage points of capital preservation). Conversely, Yu Jie's dip-buying strategy documents the peril of the ``falling knife'' anomaly in bear regimes (CAGR: 32.31\%, MaxDD: -59.40\%, Sharpe: 0.85). We synthesize these empirical findings into a unified quantitative architecture that reconciles microstructure mean reversion with macro trend preservation.
+In a unified out-of-sample showdown across 449 trading days (mid-2022 through 2023), Marco's 200-day SMA trend strategy achieves the highest risk-adjusted Sharpe ratio of \textbf{1.68} and curtails maximum drawdown to just \textbf{-19.30\%} by transitioning into 100\% cash throughout the 2022 bear market. Concurrently, Diana's volatility-targeted strategy resolves the classical ``volatility drag paradox'', delivering an annualized compound growth rate (CAGR) of \textbf{47.69\%} (matching unconstrained NVDA Buy \& Hold's 47.64\%) while slashing maximum drawdown from \textbf{-60.80\%} to \textbf{-42.45\%} ($\approx 18.35$ percentage points of capital preservation) and boosting Sharpe ratio from 0.97 to 1.13. Conversely, Yu Jie's dip-buying strategy documents the peril of the ``falling knife'' anomaly in bear regimes (CAGR: 37.22\%, MaxDD: -59.40\%, Sharpe: 0.85). We synthesize these empirical findings into a unified quantitative architecture that reconciles microstructure mean reversion with macro trend preservation.
 \end{abstract}
 
 \section{Introduction \& Economic Story}
@@ -662,7 +662,7 @@ Both ML models generate binary allocations based on whether predicted returns ex
 In the out-of-sample holdout period (449 trading days), Extension 2a delivered remarkable risk-adjusted outperformance:
 \begin{itemize}
     \item \textbf{Sharpe Ratio:} \textbf{1.68} (compared to 0.97 for Buy \& Hold NVDA and 0.41 for SPY).
-    \item \textbf{Annualized Return:} \textbf{63.83\%} | \textbf{CAGR:} \textbf{70.36\%}.
+    \item \textbf{Annualized Return:} \textbf{63.83\%} | \textbf{CAGR:} \textbf{76.68\%}.
     \item \textbf{Maximum Drawdown:} \textbf{-19.30\%} (compared to -60.80\% for NVDA Buy \& Hold).
     \item \textbf{Annualized Turnover:} \textbf{2.81} (extremely cost-efficient execution with negligible fee drag).
 \end{itemize}
@@ -731,18 +731,18 @@ To ensure robust model formulation without parameter cherry-picking, we conduct 
 \toprule
 \textbf{Target Vol} ($\sigma_{\text{target}}$) & \textbf{Ann. Return} & \textbf{CAGR} & \textbf{Ann. Vol} & \textbf{Sharpe Ratio} & \textbf{Max Drawdown} \\
 \midrule
-20\% & 24.18\% & 23.36\% & 21.84\% & 1.11 & -23.11\% \\
-30\% & 36.08\% & 34.39\% & 32.17\% & 1.12 & -33.45\% \\
-\textbf{40\% (Optimal)} & \textbf{47.63\%} & \textbf{44.68\%} & \textbf{42.14\%} & \textbf{1.13} & \textbf{-42.45\%} \\
-50\% & 52.88\% & 46.12\% & 50.12\% & 1.05 & -53.28\% \\
-60\% & 54.06\% & 42.28\% & 55.49\% & 0.97 & -60.80\% \\
+20\% & 26.12\% & 26.62\% & 22.63\% & 1.15 & -23.23\% \\
+30\% & 38.67\% & 39.27\% & 33.75\% & 1.15 & -33.33\% \\
+\textbf{40\% (Balanced)} & \textbf{47.63\%} & \textbf{47.69\%} & \textbf{42.14\%} & \textbf{1.13} & \textbf{-42.45\%} \\
+50\% & 51.51\% & 49.23\% & 48.46\% & 1.06 & -50.71\% \\
+60\% & 53.03\% & 48.35\% & 52.68\% & 1.01 & -57.69\% \\
 \midrule
-\textit{NVDA Buy \& Hold} & \textit{54.06\%} & \textit{42.28\%} & \textit{55.49\%} & \textit{0.97} & \textit{-60.80\%} \\
+\textit{NVDA Buy \& Hold} & \textit{54.06\%} & \textit{47.64\%} & \textit{55.49\%} & \textit{0.97} & \textit{-60.80\%} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The ablation reveals an inverted U-shaped Sharpe ratio trajectory peaking at $\sigma_{\text{target}} = 40\%$ (Sharpe: 1.13). At higher targets ($\ge 50\%$), the upper clamp $w_t \le 1.0$ saturates, causing the strategy to converge to unconstrained Buy \& Hold, with full exposure to the -60.80\% tail collapse.
+The ablation reveals an optimal risk-return tradeoff: Sharpe ratios remain elevated between 1.13--1.15 across conservative targets ($\sigma_{\text{target}} \le 40\%$) while keeping drawdowns substantially below the benchmark's $-60.80\%$. At higher targets ($\ge 50\%$), the upper clamp $w_t \le 1.0$ saturates and volatility drag increases, causing Sharpe to deteriorate toward 1.01 and maximum drawdown to widen to $-57.69\%$.
 
 \begin{figure}[H]
 \centering
@@ -754,9 +754,9 @@ The ablation reveals an inverted U-shaped Sharpe ratio trajectory peaking at $\s
 \subsection{Resolution of the Volatility Drag Paradox}
 The empirical results of Extension 3 provide rigorous mathematical verification of our central economic hypothesis:
 \begin{itemize}
-    \item While unconstrained NVDA Buy \& Hold achieved a higher arithmetic annualized return (54.06\% vs. 47.63\%), \textbf{Extension 3 generated a superior Compound Annual Growth Rate (CAGR: 44.68\% vs. 42.28\%)}.
-    \item This outperformance occurred because Extension 3 slashed realized portfolio volatility from 55.49\% to 42.14\%, mitigating compound variance drag.
-    \item Most importantly, Extension 3 cushioned investors against catastrophic capital destruction, containing peak-to-trough losses to \textbf{-42.45\%} compared to \textbf{-60.80\%} for Buy \& Hold ($\approx 18.35$ percentage points of downside protection).
+    \item While unconstrained NVDA Buy \& Hold achieved a higher arithmetic annualized return (54.06\% vs. 47.63\%), \textbf{Extension 3 achieved an identical Compound Annual Growth Rate (CAGR: 47.69\% vs. 47.64\%, terminal wealth: \$200,316 vs. \$200,201)}.
+    \item This compound parity with substantially lower gross market exposure occurred because Extension 3 slashed realized portfolio volatility from 55.49\% to 42.14\%, neutralizing downside variance drag.
+    \item Most importantly, Extension 3 cushioned investors against catastrophic capital destruction, containing peak-to-trough losses to \textbf{-42.45\%} compared to \textbf{-60.80\%} for Buy \& Hold ($\approx 18.35$ percentage points of downside protection) and increasing Sharpe ratio from 0.97 to 1.13.
     \item Turnover remained modest at an annualized 5.10, ensuring that net alpha easily absorbed the 10 bps transaction friction.
 \end{itemize}
 
@@ -773,14 +773,14 @@ To provide a fair, rigorous, and leakage-free comparison, all three Group 28 str
 \toprule
 \textbf{Strategy / Benchmark} & \textbf{Ann. Ret} & \textbf{CAGR} & \textbf{Ann. Vol} & \textbf{Sharpe} & \textbf{MaxDD} & \textbf{Turnover} \\
 \midrule
-\textbf{Ext 1: Daily Dip-Buying (Yu Jie)} & 45.96\% & 32.31\% & 54.06\% & 0.85 & -59.40\% & 39.85 \\
-\textbf{Ext 2a: SMA 200 Macro Trend (Marco)} & \textbf{63.83\%} & \textbf{70.36\%} & \textbf{37.88\%} & \textbf{1.68} & \textbf{-19.30\%} & \textbf{2.81} \\
+\textbf{Ext 1: Daily Dip-Buying (Yu Jie)} & 45.96\% & 37.22\% & 54.06\% & 0.85 & -59.40\% & 39.85 \\
+\textbf{Ext 2a: SMA 200 Macro Trend (Marco)} & \textbf{63.83\%} & \textbf{76.68\%} & \textbf{37.88\%} & \textbf{1.68} & \textbf{-19.30\%} & \textbf{2.81} \\
 Ext 2b: Ridge Momentum (Marco) & 12.19\% & 3.39\% & 42.67\% & 0.29 & -48.35\% & 30.31 \\
 Ext 2c: Lasso Momentum (Marco) & 14.20\% & 5.56\% & 42.52\% & 0.33 & -44.61\% & 29.18 \\
-\textbf{Ext 3: Volatility Targeting 40\% (Diana)} & 47.63\% & 44.68\% & 42.14\% & 1.13 & -42.45\% & 5.10 \\
+\textbf{Ext 3: Volatility Targeting 40\% (Diana)} & 47.63\% & 47.69\% & 42.14\% & 1.13 & -42.45\% & 5.10 \\
 \midrule
-\textit{NVDA Buy \& Hold Benchmark} & 54.06\% & 42.28\% & 55.49\% & 0.97 & -60.80\% & 0.00 \\
-\textit{SPY ETF Benchmark} & 7.78\% & 5.48\% & 19.18\% & 0.41 & -22.09\% & 0.00 \\
+\textit{NVDA Buy \& Hold Benchmark} & 54.06\% & 47.64\% & 55.49\% & 0.97 & -60.80\% & 0.00 \\
+\textit{SPY ETF Benchmark} & 7.78\% & 6.13\% & 19.18\% & 0.41 & -22.09\% & 0.00 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -798,7 +798,7 @@ Our empirical showdown isolates two radically contrasting macroeconomic regimes,
 \subsubsection{1. The 2022 Secular Bear Market (The ``Falling Knife'' Failure)}
 During 2022, high interest rates and semiconductor cyclicality triggered an aggressive -60.80\% selloff in NVDA:
 \begin{itemize}
-    \item \textbf{Why Extension 1 Faltered:} Extension 1 was calibrated to buy short-term oversold dips. However, in a secular bear market, ``oversold'' dips continue dipping. By executing binary long positions during downward momentum, Extension 1 suffered repeated stop-outs and generated heavy annualized turnover (39.85), eroding capital through fee friction and compounding losses (CAGR: 32.31\%).
+    \item \textbf{Why Extension 1 Faltered:} Extension 1 was calibrated to buy short-term oversold dips. However, in a secular bear market, ``oversold'' dips continue dipping. By executing binary long positions during downward momentum, Extension 1 suffered repeated stop-outs and generated heavy annualized turnover (39.85), eroding capital through fee friction and compounding losses (CAGR: 37.22\% vs. 47.64\% for Buy \& Hold).
     \item \textbf{Why Extension 2a Triumphed:} By requiring $P_t > \text{SMA}_{200}$, Extension 2a recognized the macro downtrend immediately, transitioning into 100\% cash for almost all of 2022. It suffered virtually zero drawdown during the crash.
     \item \textbf{How Extension 3 Mitigated Risk:} As market panic drove rolling volatility above 70\%, Extension 3 scaled position weights down to $w_t \approx 0.50$, automatically halving the portfolio's dollar loss per day.
 \end{itemize}
@@ -813,8 +813,8 @@ During 2022, high interest rates and semiconductor cyclicality triggered an aggr
 \subsubsection{2. The 2023 Generative AI Bull Market (Explosive Secular Drift)}
 In early 2023, ChatGPT and enterprise LLM adoption catalyzed an unprecedented upward re-rating, driving NVDA up over 200\%:
 \begin{itemize}
-    \item \textbf{Upside Capture in Extension 2a:} Having preserved 100\% of its capital base through 2022, Extension 2a re-entered long exposure when price crossed above the 200-day SMA in early 2023, compounding its intact equity base to achieve an extraordinary terminal CAGR of 70.36\%.
-    \item \textbf{Steady Compounding in Extension 3:} As the bull market matured and annualized volatility moderated to ~35\%, Extension 3 expanded exposure toward 100\%, compounding wealth at 44.68\% CAGR.
+    \item \textbf{Upside Capture in Extension 2a:} Having preserved 100\% of its capital base through 2022, Extension 2a re-entered long exposure when price crossed above the 200-day SMA in early 2023, compounding its intact equity base to achieve an extraordinary terminal CAGR of 76.68\%.
+    \item \textbf{Steady Compounding in Extension 3:} As the bull market matured and annualized volatility moderated to ~35\%, Extension 3 expanded exposure toward 100\%, compounding wealth at 47.69\% CAGR (matching Buy \& Hold's 47.64\% with 24\% lower volatility).
 \end{itemize}
 
 \begin{figure}[H]
@@ -839,7 +839,7 @@ This research project designed, implemented, and empirically evaluated an instit
 \begin{itemize}
     \item \textbf{Methodological Hygiene:} By enforcing strict chronological holdouts, forward-only scaling, TimeSeriesSplit CV, static outlier clipping, and 10 bps turnover friction, we demonstrated zero lookahead leakage and full execution realism.
     \item \textbf{Macro Trend Superiority:} Marco's 200-day SMA regime filter achieved the showdown's highest Sharpe ratio (1.68) and smallest drawdown (-19.30\%) by completely circumventing the 2022 bear market.
-    \item \textbf{Resolution of Volatility Drag:} Diana's volatility-targeted position sizing resolved the compounding variance paradox, beating unconstrained Buy \& Hold on CAGR (44.68\% vs. 42.28\%) while cutting maximum drawdown by 18.35 percentage points.
+    \item \textbf{Resolution of Volatility Drag:} Diana's volatility-targeted position sizing resolved the compounding variance paradox, delivering a matching 47.69\% CAGR (vs. 47.64\% for Buy \& Hold) while slashing maximum drawdown from -60.80\% to -42.45\% and elevating Sharpe ratio from 0.97 to 1.13.
     \item \textbf{Microstructure Caution:} Yu Jie's mean-reversion model proved that while dip-buying produces robust alpha in sideways or calm markets, it requires macro trend gating to avoid catastrophic falling-knife traps during secular downturns.
 \end{itemize}
 

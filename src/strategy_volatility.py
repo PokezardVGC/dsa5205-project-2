@@ -92,6 +92,7 @@ def calculate_performance_metrics(
     turnover_series: Optional[pd.Series] = None,
     risk_free_rate: float = 0.0,
     trading_days: int = 252,
+    initial_capital: float = 100000.0,
 ) -> Dict[str, float]:
     r"""Compute annualized performance and risk metrics for a backtest series.
 
@@ -107,16 +108,18 @@ def calculate_performance_metrics(
         Annualized risk-free benchmark rate.
     trading_days : int, default 252
         Number of trading days per year.
+    initial_capital : float, default 100000.0
+        Initial portfolio wealth W_0 at inception (prior to first return).
 
     Returns
     -------
     Dict[str, float]
         Dictionary of summary statistics:
         - 'Annualized_Return': Arithmetic annualized return (mean * 252)
-        - 'CAGR': Compound annual growth rate
+        - 'CAGR': Compound annual growth rate from initial capital W_0
         - 'Annualized_Vol': Annualized volatility (std * sqrt(252))
         - 'Sharpe_Ratio': (Ann_Return - Rf) / Ann_Vol
-        - 'Max_Drawdown': Peak-to-trough maximum drawdown (%)
+        - 'Max_Drawdown': Peak-to-trough maximum drawdown (%) relative to inception and peaks
         - 'Annualized_Turnover': Cumulative turnover scaled to 252 days
     """
     clean_returns = returns.dropna()
@@ -126,17 +129,23 @@ def calculate_performance_metrics(
     ann_vol = float(clean_returns.std() * np.sqrt(trading_days))
     sharpe = float((ann_return - risk_free_rate) / ann_vol) if ann_vol > 1e-8 else 0.0
 
-    # Compound Annual Growth Rate (CAGR)
+    # Compound Annual Growth Rate (CAGR) strictly from initial capital W_0
     n_days = len(clean_returns)
-    if n_days > 0 and len(clean_wealth) > 0 and clean_wealth.iloc[0] > 0:
-        cagr = float((clean_wealth.iloc[-1] / clean_wealth.iloc[0]) ** (trading_days / n_days) - 1.0)
+    if n_days > 0 and len(clean_wealth) > 0 and initial_capital > 0:
+        cagr = float((clean_wealth.iloc[-1] / initial_capital) ** (trading_days / n_days) - 1.0)
+    elif n_days > 0:
+        cagr = float(np.prod(1.0 + clean_returns) ** (trading_days / n_days) - 1.0)
     else:
         cagr = 0.0
 
-    # Maximum Drawdown
-    running_max = clean_wealth.cummax()
-    drawdowns = (clean_wealth - running_max) / np.maximum(running_max, 1e-8)
-    max_dd = float(drawdowns.min()) if len(drawdowns) > 0 else 0.0
+    # Maximum Drawdown: Prepend initial capital to measure drawdown from inception (t=0)
+    if len(clean_wealth) > 0 and initial_capital > 0:
+        wealth_series = pd.concat([pd.Series([initial_capital]), clean_wealth.reset_index(drop=True)])
+        running_max = wealth_series.cummax()
+        drawdowns = (wealth_series - running_max) / np.maximum(running_max, 1e-8)
+        max_dd = float(drawdowns.min())
+    else:
+        max_dd = 0.0
 
     # Turnover
     if turnover_series is not None and n_days > 0:
@@ -229,16 +238,19 @@ def run_volatility_strategy(
             returns=test_df["Strategy_Return"],
             cum_wealth=test_df["Cum_Strategy"],
             turnover_series=test_df["Position_Change"],
+            initial_capital=initial_capital,
         ),
         "NVDA_Buy_Hold": calculate_performance_metrics(
             returns=test_df["BuyHold_Return"],
             cum_wealth=test_df["Cum_BuyHold"],
             turnover_series=pd.Series(0.0, index=test_df.index),
+            initial_capital=initial_capital,
         ),
         "SPY_Benchmark": calculate_performance_metrics(
             returns=test_df["SPY_Return"],
             cum_wealth=test_df["Cum_SPY"],
             turnover_series=pd.Series(0.0, index=test_df.index),
+            initial_capital=initial_capital,
         ),
     }
 

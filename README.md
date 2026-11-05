@@ -99,7 +99,7 @@ python src/strategy_volatility.py
 **Expected Output:**
 * Evaluates dynamic inverse-volatility weighting ($\sigma_{\text{target}} = 40\%$).
 * Runs sensitivity ablation across $\sigma_{\text{target}} \in [20\%, 60\%]$.
-* Outputs performance: Strategy Return ~47.63%, CAGR ~44.68%, Volatility ~42.14%, Sharpe ~1.13, Max Drawdown ~-42.45% (vs -60.80% for unconstrained NVDA).
+* Outputs performance: Strategy Return ~47.63%, CAGR ~47.69%, Volatility ~42.14%, Sharpe ~1.13, Max Drawdown ~-42.45% (vs -60.80% for unconstrained NVDA).
 * Generates figures in `figures/ext3_*.png`.
 
 ---
@@ -120,11 +120,11 @@ All metrics below are computed on the identical 449 out-of-sample trading days (
 
 | Strategy / Benchmark | Contributor | Ann. Return | CAGR | Ann. Vol | Sharpe Ratio | Max Drawdown | Turnover |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Ext 2a: SMA 200 Macro Trend** | Marco | **63.83%** | **70.36%** | **37.88%** | **1.68** | **-19.30%** | **2.81** |
-| **Ext 3: Volatility Targeting 40%** | Diana | **47.63%** | **44.68%** | **42.14%** | **1.13** | **-42.45%** | **5.10** |
-| **NVDA Buy & Hold Benchmark** | Baseline | 54.06% | 42.28% | 55.49% | 0.97 | -60.80% | 0.00 |
-| **Ext 1: Daily Dip-Buying (Ridge)** | Yu Jie | 45.96% | 32.31% | 54.06% | 0.85 | -59.40% | 39.85 |
-| **SPY ETF Market Benchmark** | Baseline | 7.78% | 5.48% | 19.18% | 0.41 | -22.09% | 0.00 |
+| **Ext 2a: SMA 200 Macro Trend** | Marco | **63.83%** | **76.68%** | **37.88%** | **1.68** | **-19.30%** | **2.81** |
+| **Ext 3: Volatility Targeting 40%** | Diana | **47.63%** | **47.69%** | **42.14%** | **1.13** | **-42.45%** | **5.10** |
+| **NVDA Buy & Hold Benchmark** | Baseline | 54.06% | 47.64% | 55.49% | 0.97 | -60.80% | 0.00 |
+| **Ext 1: Daily Dip-Buying (Ridge)** | Yu Jie | 45.96% | 37.22% | 54.06% | 0.85 | -59.40% | 39.85 |
+| **SPY ETF Market Benchmark** | Baseline | 7.78% | 6.13% | 19.18% | 0.41 | -22.09% | 0.00 |
 | **Ext 2c: Lasso Momentum ($L_1$)** | Marco | 14.20% | 5.56% | 42.52% | 0.33 | -44.61% | 29.18 |
 | **Ext 2b: Ridge Momentum ($L_2$)** | Marco | 12.19% | 3.39% | 42.67% | 0.29 | -48.35% | 30.31 |
 
