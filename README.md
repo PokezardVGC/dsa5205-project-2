@@ -50,7 +50,7 @@ pip install -r requirements.txt
 
 ## 3. Reproduction & Execution Guide
 
-### ⚡ Primary Replication Command (Full Pipeline in 1 Step)
+### Primary Replication Command (Full Pipeline in 1 Step)
 To reproduce the complete end-to-end research findings across **all 5 strategy variants** and **both benchmarks** (matching Table 1 and Table 6 of the report):
 
 ```bash
@@ -136,8 +136,8 @@ dsa5205-project-2/
 │   └── test_strategy_volatility.py     <- Unit tests for boundary guards, clamping, and fee drag
 ├── figures/                            <- Publication-ready 300 DPI figures for LaTeX report
 └── report/
-    ├── Group_28_Report_Enhanced.tex    <- Submission-ready academic report in LaTeX (23 pages)
-    └── Group_28_Report_Enhanced.pdf    <- Compiled submission PDF
+    ├── Group_28_Report.tex             <- Submission-ready academic report in LaTeX (23 pages)
+    └── Group_28_Report.pdf             <- Compiled submission PDF (Official naming: Group_X_Report.pdf)
 ```
 
 ---
