@@ -50,67 +50,43 @@ pip install -r requirements.txt
 
 ## 3. Reproduction & Execution Guide
 
-### A. Run Master Consolidated Showdown (All Strategies Side-by-Side)
-To run the full 5-way out-of-sample showdown across all three member extensions and both benchmarks:
+### ⚡ Primary Replication Command (Full Pipeline in 1 Step)
+To reproduce the complete end-to-end research findings across **all 5 strategy variants** and **both benchmarks** (matching Table 1 and Table 6 of the report):
 
 ```bash
-python scripts/run_consolidated_showdown.py
+python main.py
 ```
+*(Alternatively, `python scripts/run_consolidated_showdown.py` executes the exact same master harness).*
+
 **Expected Output:**
-* Prints the comparative performance matrix (Annualized Return, CAGR, Annualized Volatility, Sharpe Ratio, Maximum Drawdown, and Annualized Turnover).
-* Generates three publication figures in `figures/`:
+* Downloads unified NVDA & SPY price data from Yahoo Finance.
+* Ingests, engineers past-only features, and executes all 5 strategies on the aligned 449-day out-of-sample window.
+* Prints the standardized performance matrix (Annualized Return, CAGR, Annualized Volatility, Sharpe Ratio, Maximum Drawdown, Annualized Turnover).
+* Saves three publication-grade comparison figures into `figures/`:
   - `figures/consolidated_showdown_equity.png` (Semi-log cumulative wealth trajectories)
   - `figures/consolidated_showdown_drawdown.png` (Underwater drawdown profiles)
   - `figures/consolidated_risk_return_tradeoff.png` (Risk-return frontier with Sharpe ratio lines)
 
 ---
 
-### B. Run Extension 1 Pipeline (Yu Jie — Ridge Mean Reversion)
-```bash
-python main.py
-```
-**Expected Output:**
-* Ingests data from `yfinance` with auto-splits and dividend adjustments.
-* Chronological split: 1,795 train/val days (2015–2021) and 449 test days (2022–2023).
-* 5-fold `TimeSeriesSplit` selects optimal $\alpha = 1000.0$.
-* Outputs out-of-sample performance: Strategy Return ~45.96%, Volatility ~54.06%, Sharpe ~0.85.
+### Symmetrical Standalone Strategy Runners
+If you wish to isolate and deep-dive into each member's specific strategy module:
 
-To generate Extension 1 tear sheets:
-```bash
-python scripts/split_performance.py
-```
+| Strategy | Contributor | Standalone Command | Alternate Entry Point |
+| :--- | :--- | :--- | :--- |
+| **Strategy 1: Mean Reversion** | Yu Jie | `python scripts/run_extension1_mean_reversion.py` | `python main.py --strategy 1` |
+| **Strategy 2: Trend & Momentum** | Marco | `python scripts/run_extension2_momentum.py` | `python main.py --strategy 2` |
+| **Strategy 3: Volatility Targeting** | Diana | `python scripts/run_extension3_volatility.py` | `python main.py --strategy 3` |
 
 ---
 
-### C. Run Extension 2 Pipeline (Marco — Macro Trend & ML Momentum)
-```bash
-python scripts/run_extension2_momentum.py
-```
-**Expected Output:**
-* Backtests Rule-Based Trend (SMA 200), Ridge Momentum ($L_2$), and Lasso Momentum ($L_1$) against NVDA and SPY benchmarks.
-* Generates regime and performance figures in `figures/Ext2_*.png`.
-
----
-
-### D. Run Extension 3 Pipeline (Diana — Volatility-Targeted Position Sizing)
-```bash
-python src/strategy_volatility.py
-```
-**Expected Output:**
-* Evaluates dynamic inverse-volatility weighting ($\sigma_{\text{target}} = 40\%$).
-* Runs sensitivity ablation across $\sigma_{\text{target}} \in [20\%, 60\%]$.
-* Outputs performance: Strategy Return ~47.63%, CAGR ~47.69%, Volatility ~42.14%, Sharpe ~1.13, Max Drawdown ~-42.45% (vs -60.80% for unconstrained NVDA).
-* Generates figures in `figures/ext3_*.png`.
-
----
-
-### E. Run Automated Test Suite
-To verify numerical guards (e.g. zero-volatility division protection, leverage caps $\le 1.0$, transaction fee deductions):
+### Automated Test Suite Verification
+To execute the automated unit test suite verifying zero-lookahead alignment, test window length preservation, leverage bounds ($w_t \in [0, 1]$), numerical division protection, and transaction cost deductions:
 
 ```bash
-pytest
+python -m pytest tests/
 ```
-**Expected Output:** All unit tests pass cleanly.
+**Expected Output:** All 8 unit tests pass cleanly in $< 1$ second.
 
 ---
 
@@ -137,7 +113,7 @@ dsa5205-project-2/
 ├── README.md                           <- Master reproducible execution guide
 ├── requirements.txt                     <- Pinned environment dependencies
 ├── pytest.ini                          <- Pytest test configuration
-├── main.py                             <- Pipeline entry point (Extension 1)
+├── main.py                             <- Master end-to-end pipeline entry point (all strategies & benchmarks)
 ├── src/
 │   ├── __init__.py
 │   ├── data.py                         <- Shared split-adjusted data ingestion via yfinance
@@ -145,20 +121,23 @@ dsa5205-project-2/
 │   ├── model.py                        <- Expanding TimeSeriesSplit CV and Ridge model selection
 │   ├── backtest.py                     <- Rebalancing execution with 10 bps transaction costs
 │   ├── evaluate.py                     <- Out-of-sample performance and risk metric calculators
-│   └── strategy_volatility.py          <- Extension 3: Dynamic Volatility Targeting (Diana)
+│   └── strategy_volatility.py          <- Extension 3: Dynamic Volatility Targeting module (Diana)
 ├── scripts/
 │   ├── run_consolidated_showdown.py    <- Master 5-way showdown harness across all extensions
-│   ├── run_extension2_momentum.py      <- Extension 2: Macro Trend & Regularized Momentum (Marco)
+│   ├── run_extension1_mean_reversion.py<- Strategy 1 standalone runner (Yu Jie)
+│   ├── run_extension2_momentum.py      <- Strategy 2 standalone runner (Marco)
+│   ├── run_extension3_volatility.py    <- Strategy 3 standalone runner (Diana)
 │   ├── split_performance.py            <- Generates detailed tear-sheet charts
 │   ├── split_eda.py                    <- Generates exploratory data analysis charts
 │   └── generate_split_report.py        <- Generates markdown tear-sheet report
 ├── tests/
 │   ├── __init__.py
+│   ├── test_pipeline_integrity.py      <- Pipeline timing, forward returns, test length preservation
 │   └── test_strategy_volatility.py     <- Unit tests for boundary guards, clamping, and fee drag
-├── figures/                            <- Publication-ready 300 DPI figures for LaTeX
+├── figures/                            <- Publication-ready 300 DPI figures for LaTeX report
 └── report/
-    ├── Group_28_Report_Final.tex       <- Complete 25-page academic report in LaTeX
-    └── Group_28_Report_Final.pdf       <- Compiled submission PDF
+    ├── Group_28_Report_Enhanced.tex    <- Submission-ready academic report in LaTeX (23 pages)
+    └── Group_28_Report_Enhanced.pdf    <- Compiled submission PDF
 ```
 
 ---

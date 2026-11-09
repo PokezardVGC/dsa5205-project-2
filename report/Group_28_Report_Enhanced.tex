@@ -782,16 +782,17 @@ All experiments can be reproduced directly from the project repository at \url{h
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Automated test suite verification (6 unit tests)
+# 2. Automated test suite verification (8 unit tests)
 python3 -m pytest tests/
 
-# 3. Master Showdown: executes all 5 strategies on the aligned 449-day window
-python3 scripts/run_consolidated_showdown.py
+# 3. Master Pipeline: executes all 5 strategies on the aligned 449-day window
+python3 main.py
 
-# 4. Individual module runners
-python3 main.py                            # Strategy 1 standalone runner (Ridge Mean Reversion)
-python3 scripts/run_extension2_momentum.py # Strategy 2 standalone runner (Trend and Momentum)
-python3 src/strategy_volatility.py         # Strategy 3 standalone runner (Volatility Targeting)
+# 4. Symmetrical standalone strategy runners (in scripts/)
+python3 scripts/run_extension1_mean_reversion.py # Strategy 1 (Yu Jie: Mean Reversion)
+python3 scripts/run_extension2_momentum.py      # Strategy 2 (Marco: Trend & Momentum)
+python3 scripts/run_extension3_volatility.py    # Strategy 3 (Diana: Volatility Targeting)
+python3 scripts/run_consolidated_showdown.py    # Direct master showdown harness
 \end{lstlisting}
 
 \subsection*{Expected Output of Master Showdown Harness}
