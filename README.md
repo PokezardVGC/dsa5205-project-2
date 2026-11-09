@@ -14,7 +14,7 @@ This repository houses the reproducible quantitative trading research codebase f
 Rather than testing a single monolithic model, Group 28 deploys a **parallel 3-hypothesis architecture** investigating three foundational market anomalies:
 
 1. **Extension 1 (Yu Jie — Daily Mean Reversion / "Buy the Dip"):**  
-   Predicts next-day corrective price rebounds using short return lags ($R_t, R_{t-1}, R_{t-2}$) and moving average deviations ($\text{Dist}_{\text{MA10}}, \text{Dist}_{\text{MA20}}$) regularized by Ridge regression with chronological `TimeSeriesSplit` cross-validation.
+   Predicts next-day corrective price rebounds using short return lags ($R_t, R_{t-1}, R_{t-2}$) and moving average deviations (`Dist_MA10`, `Dist_MA20`) regularized by Ridge regression with chronological `TimeSeriesSplit` cross-validation.
 2. **Extension 2 (Marco — Macro Trend Following & Regularized Momentum):**  
    Evaluates a non-parametric 200-day Simple Moving Average (SMA 200) structural regime filter alongside machine learning momentum models ($L_2$ Ridge and $L_1$ Lasso) to avoid secular bear markets (such as the 2022 tech drawdown).
 3. **Extension 3 (Diana — Dynamic Volatility-Targeted Position Sizing):**  
