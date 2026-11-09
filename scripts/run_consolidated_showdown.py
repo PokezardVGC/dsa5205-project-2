@@ -34,7 +34,11 @@ from src.data import fetch_data
 from src.features import engineer_features
 from src.model import train_and_select_model
 from src.backtest import backtest_strategy
-from src.strategy_volatility import run_volatility_strategy, calculate_performance_metrics
+from src.strategy_volatility import (
+    run_volatility_strategy,
+    calculate_performance_metrics,
+    plot_extension3_tear_sheets,
+)
 
 FIGURES_DIR = PROJECT_ROOT / "figures"
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
@@ -118,6 +122,7 @@ def run_showdown(
         test_index=test_idx,
         initial_capital=initial_capital,
     )
+    plot_extension3_tear_sheets(df_ext3, target_vol=target_vol, save_dir=FIGURES_DIR)
 
     # 5. Compile Showdown DataFrame
     print("\n[5/6] Aligning time series and compiling performance metrics...")
@@ -166,6 +171,21 @@ def run_showdown(
             f"{name:<38} | {m['Annualized_Return']*100:6.2f}%   | {m['CAGR']*100:6.2f}%   | {m['Annualized_Vol']*100:6.2f}%   | {m['Sharpe_Ratio']:6.2f}  | {m['Max_Drawdown']*100:6.2f}%  | {m['Annualized_Turnover']:6.2f}"
         )
     print("=" * 95)
+
+    # -------------------------------------------------------------
+    # Export Showdown Artifacts to Disk (CSV Tables)
+    # -------------------------------------------------------------
+    df_metrics = pd.DataFrame.from_dict(results, orient="index")
+    df_metrics.index.name = "Strategy_or_Benchmark"
+    metrics_csv_path = FIGURES_DIR / "consolidated_performance_metrics.csv"
+    df_metrics.to_csv(metrics_csv_path)
+
+    equity_csv_path = FIGURES_DIR / "consolidated_daily_equity.csv"
+    df_showdown.to_csv(equity_csv_path)
+
+    print(f"\n[Artifacts Exported]")
+    print(f"  -> Performance Scorecard Table: {metrics_csv_path}")
+    print(f"  -> Daily Out-of-Sample Wealth:  {equity_csv_path}")
 
     return df_showdown, results
 
