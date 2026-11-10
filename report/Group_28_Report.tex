@@ -67,23 +67,23 @@
 % =====================================================================
 \begin{titlepage}
 \centering
-\vspace*{1.0in}
+\vspace*{0.35in}
 {\large\bfseries DSA5205 $\cdot$ PROJECT 2\par}
-\vspace{0.35in}
-\rule{\linewidth}{0.8pt}\\[0.25in]
+\vspace{0.20in}
+\rule{\linewidth}{0.8pt}\\[0.18in]
 {\LARGE\bfseries Systematic Trading Strategies for NVIDIA (NVDA)\par}
-\vspace{0.12in}
+\vspace{0.10in}
 {\Large Mean Reversion, Trend Following, and Volatility Targeting\par}
-\vspace{0.22in}
-\rule{\linewidth}{0.8pt}\\[0.55in]
+\vspace{0.15in}
+\rule{\linewidth}{0.8pt}\\[0.25in]
 
 {\Large\bfseries Group 28\par}
-\vspace{0.25in}
+\vspace{0.15in}
 
 \begin{table}[H]
 \centering
 \normalsize
-\renewcommand{\arraystretch}{1.25}
+\renewcommand{\arraystretch}{1.20}
 \begin{tabular}{l l}
 \toprule
 \textbf{Name} & \textbf{Student ID} \\
@@ -95,8 +95,33 @@ Poh Yu Jie & A0216055M \\
 \end{tabular}
 \end{table}
 
+\vspace{0.15in}
+
+{\small
+\textbf{GitHub Repository:} \href{https://github.com/PokezardVGC/dsa5205-project-2}{\texttt{https://github.com/PokezardVGC/dsa5205-project-2}}\\[0.06in]
+\textbf{Video Presentation:} \href{https://youtu.be/VHOypJud0Y0}{\texttt{https://youtu.be/VHOypJud0Y0}}\par
+}
+
+\vspace{0.20in}
+
+\setlength{\fboxsep}{10pt}
+\setlength{\fboxrule}{0.8pt}
+\fcolorbox{black!35}{black!2}{%
+\begin{minipage}{0.92\linewidth}
+\centering
+{\bfseries\normalsize Statement of Team Contributions\par}
+\vspace{0.08in}
+\raggedright\small
+All three team members contributed equally to the overall research design, backtesting methodology, written report, and video presentation. Within this collaborative framework, individual primary responsibilities were as follows:
+\begin{itemize}[leftmargin=*, nosep, topsep=4pt]
+    \item \textbf{Diana} led the dynamic volatility-targeting strategy (Strategy 3), codebase testing, and final consolidated multi-strategy showdown analysis.
+    \item \textbf{Marco} led the macro trend-following and momentum strategy models (Strategy 2), failure analysis, and presentation deck design and preparation.
+    \item \textbf{Poh Yu Jie} led the data pipeline, corporate action adjustments, feature engineering, and the daily mean-reversion strategy (Strategy 1).
+\end{itemize}
+\end{minipage}%
+}
+
 \vfill
-{\normalsize October 2026\par}
 \end{titlepage}
 
 % =====================================================================
@@ -775,7 +800,7 @@ This composite rule is a conceptual extension rather than a backtested model in 
 \section{Execution Commands and Terminal Verification}
 \label{app:run}
 
-All experiments can be reproduced directly from the project repository at \url{https://github.com/PokezardVGC/dsa5205-project-2}:
+All experiments can be reproduced directly from the project repository at \url{https://github.com/PokezardVGC/dsa5205-project-2}. The full video walkthrough is available at \url{https://youtu.be/VHOypJud0Y0}:
 
 \begin{lstlisting}[language=bash]
 # 1. Environment configuration

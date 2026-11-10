@@ -4,6 +4,9 @@
 **Group:** Group 28  
 **Team Members:** Yu Jie, Marco, Diana  
 **Academic Year:** 2026/2027 — National University of Singapore  
+**Video Presentation (YouTube):** https://youtu.be/VHOypJud0Y0  
+**GitHub Repository:** https://github.com/PokezardVGC/dsa5205-project-2  
+**Report Document:** [`report/Group_28_Report.pdf`](report/Group_28_Report.pdf)  
 
 ---
 
@@ -110,34 +113,35 @@ All metrics below are computed on the identical 449 out-of-sample trading days (
 
 ```text
 dsa5205-project-2/
-├── README.md                           <- Master reproducible execution guide
+├── README.md                           <- Project documentation and execution guide
 ├── requirements.txt                     <- Pinned environment dependencies
 ├── pytest.ini                          <- Pytest test configuration
-├── main.py                             <- Master end-to-end pipeline entry point (all strategies & benchmarks)
+├── main.py                             <- End-to-end pipeline execution script
 ├── src/
 │   ├── __init__.py
-│   ├── data.py                         <- Shared split-adjusted data ingestion via yfinance
-│   ├── features.py                     <- Zero-lookahead feature and target return engineering
-│   ├── model.py                        <- Expanding TimeSeriesSplit CV and Ridge model selection
-│   ├── backtest.py                     <- Rebalancing execution with 10 bps transaction costs
-│   ├── evaluate.py                     <- Out-of-sample performance and risk metric calculators
-│   └── strategy_volatility.py          <- Extension 3: Dynamic Volatility Targeting module (Diana)
+│   ├── data.py                         <- Data download and corporate action adjustments
+│   ├── features.py                     <- Feature engineering and target returns
+│   ├── model.py                        <- TimeSeriesSplit cross-validation and Ridge fitting
+│   ├── backtest.py                     <- Portfolio rebalancing and transaction cost model
+│   ├── evaluate.py                     <- Risk and return metric calculations
+│   └── strategy_volatility.py          <- Strategy 3 volatility targeting module
 ├── scripts/
-│   ├── run_consolidated_showdown.py    <- Master 5-way showdown harness across all extensions
-│   ├── run_extension1_mean_reversion.py<- Strategy 1 standalone runner (Yu Jie)
-│   ├── run_extension2_momentum.py      <- Strategy 2 standalone runner (Marco)
-│   ├── run_extension3_volatility.py    <- Strategy 3 standalone runner (Diana)
-│   ├── split_performance.py            <- Generates detailed tear-sheet charts
-│   ├── split_eda.py                    <- Generates exploratory data analysis charts
-│   └── generate_split_report.py        <- Generates markdown tear-sheet report
+│   ├── run_consolidated_showdown.py    <- Consolidated multi-strategy backtest script
+│   ├── run_extension1_mean_reversion.py<- Strategy 1 standalone runner (Mean Reversion)
+│   ├── run_extension2_momentum.py      <- Strategy 2 standalone runner (Trend & Momentum)
+│   ├── run_extension3_volatility.py    <- Strategy 3 standalone runner (Volatility Targeting)
+│   ├── split_performance.py            <- Generates performance tear-sheets
+│   ├── split_eda.py                    <- Generates exploratory data analysis plots
+│   └── generate_split_report.py        <- Exports markdown performance summary
+├── notebooks/
+│   └── marco_momentum_strategy.ipynb   <- Exploratory prototyping notebook
 ├── tests/
-│   ├── __init__.py
-│   ├── test_pipeline_integrity.py      <- Pipeline timing, forward returns, test length preservation
-│   └── test_strategy_volatility.py     <- Unit tests for boundary guards, clamping, and fee drag
-├── figures/                            <- Publication-ready 300 DPI figures for LaTeX report
+│   ├── test_pipeline_integrity.py      <- Unit tests for time alignment and leakage
+│   └── test_strategy_volatility.py     <- Unit tests for volatility sizing and position limits
+├── figures/                            <- Generated plots and metric tables
 └── report/
-    ├── Group_28_Report.tex             <- Submission-ready academic report in LaTeX (23 pages)
-    └── Group_28_Report.pdf             <- Compiled submission PDF (Official naming: Group_X_Report.pdf)
+    ├── Group_28_Report.tex             <- LaTeX source document
+    └── Group_28_Report.pdf             <- Final written report (PDF, 23 pages)
 ```
 
 ---
