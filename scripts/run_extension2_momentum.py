@@ -212,5 +212,7 @@ def main():
 
     print("Execution complete. Output figures saved in figures/ directory.")
 
+run_strategy2 = main
+
 if __name__ == '__main__':
     main()

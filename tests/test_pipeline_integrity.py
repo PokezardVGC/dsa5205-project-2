@@ -46,3 +46,10 @@ def test_backtest_preserves_test_length():
     assert not df_bt["Strategy_Return"].isna().any(), "Strategy_Return contains NaNs"
     assert not df_bt["SPY_Return"].isna().any(), "SPY_Return contains NaNs"
     assert df_bt.index[-1] == test_idx[-1], "Final date was truncated"
+
+    # Verify strategy runners are callable
+    from main import run_strategy1, run_strategy2, run_strategy3, run_master_pipeline
+    assert callable(run_strategy1)
+    assert callable(run_strategy2)
+    assert callable(run_strategy3)
+    assert callable(run_master_pipeline)

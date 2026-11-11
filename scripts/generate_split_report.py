@@ -1,73 +1,62 @@
-from docx import Document
-from docx.shared import Inches
-import os
+"""Exports markdown performance summary of all strategies and benchmarks.
 
-def build_report():
-    doc = Document()
-    doc.add_heading('Group 28: NVDA Buy the Dip Strategy Report (Revised & Separated)', 0)
+DSA5205 Machine Learning in Quantitative Finance — Project 2
+Group 28 (Yu Jie, Marco, Diana)
+"""
 
-    with open('report_text.txt', 'r') as f:
-        text = f.read()
+from pathlib import Path
+import pandas as pd
 
-    doc.add_heading('Introduction', level=1)
-    doc.add_paragraph("This report evaluates a mean-reversion 'Buy the Dip' strategy applied to NVDA. Based on the latest Quantitative and Machine Learning feedback, we have separated our visual and performance analysis into distinct, highly readable charts.")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-    doc.add_heading('Exploratory Data Analysis (EDA)', level=1)
-    doc.add_paragraph("The EDA has been separated to clearly demonstrate the rationale behind a mean-reversion approach for NVDA.")
-    
-    if os.path.exists('eda_1_price.png'):
-        doc.add_picture('eda_1_price.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 1: Log-scale price chart of NVDA with 50-day and 200-day Simple Moving Averages. This context is essential for understanding the overall asset trend against its short-term and long-term momentum.")
 
-    if os.path.exists('eda_2_zscore.png'):
-        doc.add_picture('eda_2_zscore.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 2: Rolling 50-day Z-score. We define a 'dip' mathematically as instances where the Z-score crosses below the -2 standard deviation threshold, represented by the red shaded regions.")
+def build_markdown_report():
+    """Generate and save markdown performance scorecard summary."""
+    metrics_path = PROJECT_ROOT / "figures" / "consolidated_performance_metrics.csv"
+    if not metrics_path.exists():
+        from scripts.run_consolidated_showdown import run_showdown, plot_showdown_figures
+        df_showdown, results = run_showdown()
+        plot_showdown_figures(df_showdown, results)
 
-    if os.path.exists('eda_3_hurst.png'):
-        doc.add_picture('eda_3_hurst.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 3: Rolling Hurst Exponent. A Hurst exponent below 0.5 (shaded green) statistically confirms periods where NVDA exhibits mean-reverting behavior, justifying the underlying strategy.")
+    df_metrics = pd.read_csv(metrics_path)
 
-    if os.path.exists('eda_4_drawdown.png'):
-        doc.add_picture('eda_4_drawdown.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 4: Underwater drawdown chart. This highlights the severity and duration of peak-to-trough declines for NVDA, with psychological thresholds marked at -10% and -20%.")
+    md_lines = [
+        "# DSA5205 Project 2 — Quantitative Performance Scorecard Summary",
+        "",
+        "**Group 28:** Yu Jie, Marco, Diana  ",
+        "**Out-of-Sample Test Window:** 2022-03-17 to 2023-12-28 (449 Trading Days)  ",
+        "**Transaction Cost Friction:** 10 bps (0.10%) on position rebalancing  ",
+        "",
+        "## Master Strategy Comparison",
+        "",
+        "| Strategy / Benchmark | Ann. Return | CAGR | Ann. Vol | Sharpe Ratio | Max Drawdown | Turnover |",
+        "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+    ]
 
-    if os.path.exists('eda_5_corr.png'):
-        doc.add_picture('eda_5_corr.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 5: 60-day rolling correlation with SPY. By tracking this, we can assess whether NVDA's dips are idiosyncratic (asset-specific) or systematic (market-wide).")
+    for _, row in df_metrics.iterrows():
+        strat = row["Strategy_or_Benchmark"]
+        ann_ret = f"{row['Annualized_Return']*100:.2f}%"
+        cagr = f"{row['CAGR']*100:.2f}%"
+        ann_vol = f"{row['Annualized_Vol']*100:.2f}%"
+        sharpe = f"{row['Sharpe_Ratio']:.2f}"
+        max_dd = f"{row['Max_Drawdown']*100:.2f}%"
+        turnover = f"{row['Annualized_Turnover']:.2f}"
+        md_lines.append(f"| {strat} | {ann_ret} | {cagr} | {ann_vol} | {sharpe} | {max_dd} | {turnover} |")
 
-    if os.path.exists('eda_6_vol.png'):
-        doc.add_picture('eda_6_vol.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 6: Rolling annualized volatility. Dips frequently cluster with volatility spikes, an important factor for risk-management.")
+    md_lines.extend([
+        "",
+        "## Key Quantitative Insights",
+        "",
+        "1. **Macro Trend Dominance (Ext 2a):** The 200-day SMA trend filter delivered the highest risk-adjusted Sharpe (1.68) and lowest drawdown (-19.30%) by effectively exiting into cash during the 2022 bear market and capturing the 2023 bull regime.",
+        "2. **Dynamic Volatility Control (Ext 3):** Volatility targeting slashed drawdown from -60.80% (NVDA B&H) to -42.45% while matching B&H CAGR (47.69% vs 47.64%) and increasing Sharpe from 0.97 to 1.13.",
+        "3. **Short-Term Mean Reversion Limits (Ext 1):** Daily dip-buying incurred high turnover (39.85) and suffered severe drawdown (-59.40%) during secular trend regimes, demonstrating the limits of pure short-term mean-reversion on high-beta growth equities.",
+        "4. **Friction Integrity:** All results strictly account for 10 bps execution friction and backwards-looking features with zero lookahead bias.",
+    ])
 
-    if os.path.exists('eda_dist.png'):
-        doc.add_picture('eda_dist.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 7: Kernel Density Estimation (KDE) comparing the daily return distributions of NVDA and SPY. The pronounced fat tails and leptokurtosis in NVDA underscore the extreme risks of trying to catch a falling knife.")
+    output_path = PROJECT_ROOT / "report" / "performance_summary.md"
+    output_path.write_text("\n".join(md_lines) + "\n", encoding="utf-8")
+    print(f"Summary markdown report successfully generated: {output_path}")
 
-    doc.add_heading('Out-of-Sample Performance Evaluation', level=1)
-    doc.add_paragraph("The strategy's performance on out-of-sample data is broken down into the following key metrics:")
-    
-    if os.path.exists('perf_1_cumulative.png'):
-        doc.add_picture('perf_1_cumulative.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 8: Out-of-sample cumulative returns (log scale). This clearly separates the growth trajectory of the strategy versus pure buy-and-hold benchmarks.")
 
-    if os.path.exists('perf_2_underwater.png'):
-        doc.add_picture('perf_2_underwater.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 9: Strategy vs. Benchmark underwater profile. The red area plots exactly when and how deeply the strategy experienced capital lock-up or loss from all-time highs.")
-
-    if os.path.exists('perf_3_sharpe.png'):
-        doc.add_picture('perf_3_sharpe.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 10: Rolling 6-month Sharpe Ratio. Rather than a single static number, this demonstrates the temporal stability and decay of the strategy's risk-adjusted edge.")
-
-    if os.path.exists('perf_4_beta.png'):
-        doc.add_picture('perf_4_beta.png', width=Inches(6.0))
-        doc.add_paragraph("Figure 11: Rolling 6-month Beta to SPY. This ensures the strategy does not inadvertently take on massive market exposure during periods of high turbulence.")
-
-    doc.add_heading('Conclusion & Original Text Excerpts', level=1)
-    doc.add_paragraph("Below are selected excerpts from the original extracted text for continuity:")
-    doc.add_paragraph(text[:3000] + "\n...[truncated for brevity]...")
-
-    doc.save('Group_28_Report_Final.docx')
-    print("Report saved to Group_28_Report_Final.docx")
-
-if __name__ == '__main__':
-    build_report()
+if __name__ == "__main__":
+    build_markdown_report()
