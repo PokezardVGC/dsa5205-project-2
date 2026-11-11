@@ -37,16 +37,8 @@ def run_strategy1():
 
 def run_strategy2():
     """Execute standalone Strategy 2 (Macro Trend & ML Momentum)."""
-    from scripts.run_extension2_momentum import (
-        fetch_momentum_data,
-        engineer_momentum_features,
-        run_strategy2_models,
-        plot_extension2_figures,
-    )
-    df_raw = fetch_momentum_data()
-    df_m = engineer_momentum_features(df_raw)
-    test_m, results = run_strategy2_models(df_m)
-    plot_extension2_figures(df_m, test_m)
+    from scripts.run_extension2_momentum import main as _run_s2
+    _run_s2()
 
 
 def run_strategy3():
